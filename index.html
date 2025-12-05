@@ -93,11 +93,11 @@
                 </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
+                <div id="modal-image-container">
                     <div id="modal-image-placeholder" class="bg-stone-100 rounded-lg flex items-center justify-center border-dashed border-2 border-stone-300 aspect-video md:aspect-square">
                         <p class="text-stone-500 p-4 text-center">Image for: <strong id="modal-exercise-name">Exercise</strong></p>
                     </div>
-                    <p class="text-xs text-stone-400 mt-2 text-center">
+                    <p id="modal-image-note" class="text-xs text-stone-400 mt-2 text-center">
                         <span class="font-bold text-orange-600">Note:</span> Image is a placeholder. In a live app, this would be a GIF/Video.
                     </p>
                 </div>
@@ -296,18 +296,17 @@
                 description: "Start in a plank position. Lower your chest towards the floor by bending your elbows (keeping them close to your body for triceps, or wider for chest). Push back up fully extending the arms.",
                 tip: "Maintain a straight line from head to heels. If needed, perform on your knees."
             },
-            /* UPDATED EXERCISES */
             "Inverted Row": {
                 target: "Back (Lats, Rhomboids), Biceps, Core",
                 description: "Lie underneath a sturdy table or desk. Grip the edge with hands shoulder-width apart. Pull your chest up to the table edge, keeping your body in a straight plank line from head to heels. Lower slowly.",
-                tip: "Keep your core tight and don't let your hips sag. Ensure the table is heavy enough not to tip."
+                tip: "Keep your core tight and don't let your hips sag. Ensure the table is heavy enough not to tip.",
+                image: "image_3.png"
             },
             "Band Pull-Apart": {
                 target: "Rear Delts, Upper Back, Rotator Cuff",
                 description: "Hold a resistance band or towel with hands shoulder-width apart, arms extended straight in front of you. Pull your hands apart horizontally, squeezing your shoulder blades together until the band touches your chest. Control the return.",
                 tip: "Keep your elbows straight but soft. Do not shrug your shoulders up towards your ears."
             },
-            /* END UPDATES */
             "Plank": {
                 target: "Core (Anti-Extension)",
                 description: "Hold a push-up or forearm position, maintaining a straight line from head to heels. Brace your core and glutes tightly.",
@@ -965,6 +964,9 @@
         function showExerciseDetails(exerciseName) {
             const sanitizedName = exerciseName.replace(/&quot;/g, '"');
             const details = exerciseDetails[sanitizedName];
+            const imageContainer = document.getElementById('modal-image-container');
+            const placeholder = document.getElementById('modal-image-placeholder');
+            const note = document.getElementById('modal-image-note');
             
             if (!details) {
                 // Handle case where details are missing
@@ -974,10 +976,21 @@
                     <p class="text-red-500 font-bold">Details Indisponibles</p>
                     <p>Aucune description ou image n'est disponible pour l'exercice "${sanitizedName}".</p>
                 `;
+                // Reset image container to placeholder
+                placeholder.innerHTML = `<p class="text-stone-500 p-4 text-center">Image for: <strong id="modal-exercise-name">${sanitizedName}</strong></p>`;
+                note.classList.remove('hidden');
             } else {
                 // Populate modal with dynamic data
                 document.getElementById('modal-title').innerText = sanitizedName;
-                document.getElementById('modal-exercise-name').innerText = sanitizedName;
+                
+                // Check for image and display it if available
+                if (details.image) {
+                    placeholder.innerHTML = `<img src="${details.image}" alt="${sanitizedName}" class="w-full h-full object-cover rounded-lg">`;
+                    note.classList.add('hidden');
+                } else {
+                    placeholder.innerHTML = `<p class="text-stone-500 p-4 text-center">Image for: <strong id="modal-exercise-name">${sanitizedName}</strong></p>`;
+                    note.classList.remove('hidden');
+                }
                 
                 document.getElementById('modal-content').innerHTML = `
                     <div class="space-y-4">
