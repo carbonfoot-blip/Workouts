@@ -985,7 +985,7 @@
                 
                 // Check for image and display it if available
                 if (details.image) {
-                    placeholder.innerHTML = `<img src="${details.image}" alt="${sanitizedName}" class="w-full h-full object-cover rounded-lg">`;
+                    placeholder.innerHTML = `<img src="${details.image}" alt="${sanitizedName}" class="w-full h-full object-contain rounded-lg">`;
                     note.classList.add('hidden');
                 } else {
                     placeholder.innerHTML = `<p class="text-stone-500 p-4 text-center">Image for: <strong id="modal-exercise-name">${sanitizedName}</strong></p>`;
