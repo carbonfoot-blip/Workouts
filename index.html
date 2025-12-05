@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitFlow Interactive Trainer</title>
-    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         /* Custom Scrollbar for cleaner UI */
@@ -56,10 +55,10 @@
             z-index: 1000;
         }
     </style>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-stone-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col">
 
-    <!-- Navigation -->
     <nav class="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16">
@@ -67,18 +66,17 @@
                     <span class="text-2xl font-bold text-stone-900 tracking-tight">FitFlow<span class="text-orange-600">.</span></span>
                 </div>
                 <div class="flex space-x-2 sm:space-x-8 items-center overflow-x-auto">
-                    <button onclick="switchTab('home')" id="nav-home" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-orange-600 bg-orange-50 transition-colors">Dashboard</button>
-                    <button onclick="switchTab('day1')" id="nav-day1" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Day 1</button>
-                    <button onclick="switchTab('day2')" id="nav-day2" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Day 2</button>
-                    <button onclick="switchTab('day3')" id="nav-day3" class="nav-btn px-3 py-2 rounded-md text-sm font-medium text-stone-500 hover:text-stone-900 transition-colors">Day 3</button>
+                    <button onclick="switchTab('home')" id="nav-home" class="nav-btn px-3 py-2 rounded-md text-sm font-medium transition-colors text-stone-500">Dashboard</button>
+                    <button onclick="switchTab('day1')" id="nav-day1" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:text-stone-900 transition-colors text-stone-500">Day 1</button>
+                    <button onclick="switchTab('day2')" id="nav-day2" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:text-stone-900 transition-colors bg-orange-50 text-orange-600">Day 2</button>
+                    <button onclick="switchTab('day3')" id="nav-day3" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:text-stone-900 transition-colors text-stone-500">Day 3</button>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Global Timer Overlay (Hidden by default) -->
     <div id="timer-overlay" class="fixed inset-0 bg-stone-900/90 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="text-stone-300 text-lg mb-4">Rest & Recover</div>
+        <div class="text-stone-300 text-lg mb-4">Rest &amp; Recover</div>
         <div id="timer-display" class="text-8xl font-mono font-bold text-white mb-8">00:00</div>
         <div class="flex space-x-4">
             <button onclick="addTime(10)" class="bg-stone-700 hover:bg-stone-600 text-white px-6 py-3 rounded-full font-medium transition">+10s</button>
@@ -86,38 +84,32 @@
         </div>
     </div>
 
-    <!-- Exercise Detail Modal -->
     <div id="detail-modal" class="modal-backdrop hidden" onclick="hideExerciseDetails()">
         <div class="bg-white rounded-xl shadow-2xl p-6 w-11/12 max-w-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center border-b pb-3 mb-4">
-                <h2 id="modal-title" class="text-2xl font-bold text-stone-900">Exercise Details</h2>
+                <h2 id="modal-title" class="text-2xl font-bold text-stone-900">Exercise Name</h2>
                 <button onclick="hideExerciseDetails()" class="text-stone-400 hover:text-stone-700">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Image/Placeholder Column -->
                 <div>
                     <div id="modal-image-placeholder" class="bg-stone-100 rounded-lg flex items-center justify-center border-dashed border-2 border-stone-300 aspect-video md:aspect-square">
-                        <p class="text-stone-500 p-4 text-center">Image for: <strong id="modal-exercise-name"></strong></p>
+                        <p class="text-stone-500 p-4 text-center">Image for: <strong id="modal-exercise-name">Exercise</strong></p>
                     </div>
                     <p class="text-xs text-stone-400 mt-2 text-center">
                         <span class="font-bold text-orange-600">Note:</span> Image is a placeholder. In a live app, this would be a GIF/Video.
                     </p>
                 </div>
-                <!-- Content Column -->
                 <div id="modal-content" class="text-stone-600 space-y-4">
-                    <!-- Dynamic content injected here -->
-                </div>
+                    </div>
             </div>
         </div>
     </div>
 
     <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
 
-        <!-- HOME VIEW: Dashboard (Content remains the same) -->
-        <div id="view-home" class="animate-fade-in space-y-8">
-            <!-- Intro Section -->
+        <div id="view-home" class="animate-fade-in space-y-8 hidden">
             <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 sm:p-10">
                 <h1 class="text-3xl sm:text-4xl font-bold text-stone-900 mb-4">Your 3-Day Training Plan</h1>
                 <p class="text-lg text-stone-600 leading-relaxed max-w-3xl">
@@ -129,11 +121,11 @@
                     <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
                         <div class="text-2xl mb-1">🦵</div>
                         <h3 class="font-bold text-stone-900">Day 1: Lower Body</h3>
-                        <p class="text-sm text-stone-600 mt-1">Strength & Hypertrophy focused on glutes, quads, and hamstrings.</p>
+                        <p class="text-sm text-stone-600 mt-1">Strength &amp; Hypertrophy focused on glutes, quads, and hamstrings.</p>
                     </div>
                     <div class="p-4 bg-stone-100 rounded-xl border border-stone-200">
                         <div class="text-2xl mb-1">💪</div>
-                        <h3 class="font-bold text-stone-900">Day 2: Upper & Core</h3>
+                        <h3 class="font-bold text-stone-900">Day 2: Upper &amp; Core</h3>
                         <p class="text-sm text-stone-600 mt-1">Push/Pull mechanics combined with core stability and rotation.</p>
                     </div>
                     <div class="p-4 bg-stone-100 rounded-xl border border-stone-200">
@@ -144,9 +136,7 @@
                 </div>
             </div>
 
-            <!-- Analytics Section -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- Chart 1: Balance -->
                 <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
                     <h2 class="text-xl font-bold text-stone-800 mb-2">Training Focus Distribution</h2>
                     <p class="text-sm text-stone-500 mb-6">Visualizing the balance between muscle groups and energy systems.</p>
@@ -155,7 +145,6 @@
                     </div>
                 </div>
 
-                <!-- Chart 2: Volume -->
                 <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
                     <h2 class="text-xl font-bold text-stone-800 mb-2">Estimated Volume (Sets)</h2>
                     <p class="text-sm text-stone-500 mb-6">Total working sets per day (excluding warm-ups).</p>
@@ -166,13 +155,11 @@
             </div>
         </div>
 
-        <!-- WORKOUT VIEW (Dynamic Template) -->
-        <div id="view-workout" class="hidden animate-fade-in">
-            <!-- Header -->
+        <div id="view-workout" class="animate-fade-in">
             <div class="flex flex-col md:flex-row md:items-center justify-between mb-8">
                 <div>
-                    <h2 id="workout-title" class="text-3xl font-bold text-stone-900">Day Title</h2>
-                    <p id="workout-subtitle" class="text-stone-500 mt-1">Focus area description</p>
+                    <h2 id="workout-title" class="text-3xl font-bold text-stone-900">Day 2: Upper Body &amp; Core</h2>
+                    <p id="workout-subtitle" class="text-stone-500 mt-1">Push/Pull Strength &amp; Core Stability</p>
                 </div>
                 <div class="mt-4 md:mt-0 flex items-center space-x-3">
                     <div class="text-sm font-medium text-stone-400">Progress</div>
@@ -183,17 +170,13 @@
                 </div>
             </div>
 
-            <!-- Introduction Paragraph for the Day -->
             <div class="bg-stone-100 rounded-lg p-4 mb-6 text-stone-700 text-sm border-l-4 border-orange-500">
-                <p id="workout-intro">Loading workout details...</p>
+                <p id="workout-intro">Day 2 balances the upper body with push and pull movements. You will perform push-ups for chest/shoulders, followed by inverted rows and band work for the back. The session finishes with a dedicated core block focusing on rotation and anti-rotation stability.</p>
             </div>
 
-            <!-- Dynamic Content Container -->
             <div id="workout-container" class="space-y-6">
-                <!-- Blocks will be injected here via JS -->
-            </div>
+                </div>
 
-            <!-- Finish Button -->
             <div class="mt-12 text-center pb-12">
                 <button onclick="finishWorkout()" class="bg-stone-900 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-orange-600 transition-colors shadow-lg transform hover:-translate-y-1">
                     Complete Workout
@@ -210,7 +193,6 @@
         </div>
     </footer>
 
-    <!-- JavaScript Logic -->
     <script>
         // --- DATA STORE (EXERCISE DETAILS) ---
         const exerciseDetails = {
@@ -314,16 +296,18 @@
                 description: "Start in a plank position. Lower your chest towards the floor by bending your elbows (keeping them close to your body for triceps, or wider for chest). Push back up fully extending the arms.",
                 tip: "Maintain a straight line from head to heels. If needed, perform on your knees."
             },
-            "Bent-Over Row": {
-                target: "Back (Lats, Rhomboids), Biceps",
-                description: "Hinge at the hips until your torso is nearly parallel to the floor, holding weights. Pull the weights towards your chest, squeezing your shoulder blades together. Lower slowly.",
-                tip: "Avoid standing up straight as you pull. Maintain the hinged position."
+            /* UPDATED EXERCISES */
+            "Inverted Row": {
+                target: "Back (Lats, Rhomboids), Biceps, Core",
+                description: "Lie underneath a sturdy table or desk. Grip the edge with hands shoulder-width apart. Pull your chest up to the table edge, keeping your body in a straight plank line from head to heels. Lower slowly.",
+                tip: "Keep your core tight and don't let your hips sag. Ensure the table is heavy enough not to tip."
             },
-            "Rear Delt Fly": {
-                target: "Shoulders (Posterior Deltoid), Upper Back",
-                description: "Start in the Bent-Over Row position. With lighter weights and slightly bent elbows, raise your arms out to the sides until parallel to the floor. Focus on the muscles in the upper back/rear shoulder.",
-                tip: "Keep the movement smooth; avoid momentum. Think about pulling your elbows back, not lifting the weights."
+            "Band Pull-Apart": {
+                target: "Rear Delts, Upper Back, Rotator Cuff",
+                description: "Hold a resistance band or towel with hands shoulder-width apart, arms extended straight in front of you. Pull your hands apart horizontally, squeezing your shoulder blades together until the band touches your chest. Control the return.",
+                tip: "Keep your elbows straight but soft. Do not shrug your shoulders up towards your ears."
             },
+            /* END UPDATES */
             "Plank": {
                 target: "Core (Anti-Extension)",
                 description: "Hold a push-up or forearm position, maintaining a straight line from head to heels. Brace your core and glutes tightly.",
@@ -439,7 +423,6 @@
                 description: "Lie flat on your back, arms slightly away from the body, palms up. Close your eyes and completely relax every muscle. Focus on your breath.",
                 tip: "Stay for 1-5 minutes. This is crucial for recovery and cooling down the nervous system."
             }
-            // Add other exercises as needed
         };
 
 
@@ -575,7 +558,7 @@
             day2: {
                 title: "Day 2: Upper Body & Core",
                 focus: "Push/Pull Strength & Core Stability",
-                intro: "Day 2 balances the upper body with push and pull movements. You will perform push-ups for chest/shoulders, followed by rows and flys for the back. The session finishes with a dedicated core block focusing on rotation and anti-rotation stability.",
+                intro: "Day 2 balances the upper body with push and pull movements. You will perform push-ups for chest/shoulders, followed by inverted rows and band work for the back. The session finishes with a dedicated core block focusing on rotation and anti-rotation stability.",
                 blocks: [
                     {
                         title: "1. Warm Up",
@@ -602,18 +585,18 @@
                             {
                                 desc: "Set 1",
                                 exercises: [
-                                    { name: "Bent-Over Row", reps: "15 reps", note: "Light Dumbbells/Band" },
+                                    { name: "Inverted Row", reps: "12-15 reps", note: "Using a sturdy table" },
                                     { name: "Rest", rest: 20 },
-                                    { name: "Rear Delt Fly", reps: "15 reps" }
+                                    { name: "Band Pull-Apart", reps: "15-20 reps", note: "Band or Towel" }
                                 ],
                                 rest: 20
                             },
                             {
                                 desc: "Set 2",
                                 exercises: [
-                                    { name: "Bent-Over Row", reps: "15 reps", note: "Light Dumbbells/Band" },
+                                    { name: "Inverted Row", reps: "12-15 reps", note: "Using a sturdy table" },
                                     { name: "Rest", rest: 20 },
-                                    { name: "Rear Delt Fly", reps: "15 reps" }
+                                    { name: "Band Pull-Apart", reps: "15-20 reps", note: "Band or Towel" }
                                 ],
                                 rest: 20
                             }
@@ -825,7 +808,7 @@
         function getInfoButton(exerciseName) {
             // This is the clickable info button element
             const sanitizedName = exerciseName.replace(/"/g, '&quot;');
-            // Check if details exist before adding the button (optional, but cleaner)
+            // Check if details exist before adding the button
             if (exerciseDetails[exerciseName]) {
                  return `
                     <button onclick="showExerciseDetails('${sanitizedName}')" 
@@ -834,7 +817,7 @@
                     </button>
                 `;
             }
-            return ''; // No button if no details are available
+            return ''; 
         }
 
         function renderWorkout(dayId) {
@@ -947,7 +930,7 @@
                                     ${section.items.map(item => {
                                         // Extract exercise name from mixed items (e.g., "30 sec Ice Skater")
                                         const nameMatch = item.match(/^(.*?)\s\d/); 
-                                        const exerciseName = nameMatch ? nameMatch[1].trim() : item.trim().replace(/\(.*\)/g, '').trim(); // Fallback for cool-downs
+                                        const exerciseName = nameMatch ? nameMatch[1].trim() : item.trim().replace(/\(.*\)/g, '').trim(); 
                                         
                                         return `
                                             <li class="flex items-center">
@@ -1034,7 +1017,6 @@
         }
 
         function finishWorkout() {
-            // Note: Using a custom modal/toast in a real app, but using simple alert here for functionality demo.
             alert("Great job! Workout completed. Ensure you hydrate and rest."); 
             switchTab('home');
         }
@@ -1114,7 +1096,7 @@
                 data: {
                     labels: ['Lower Body', 'Upper Body (Push/Pull)', 'Core', 'Cardio/Metabolic'],
                     datasets: [{
-                        data: [35, 30, 15, 20], // Estimated split based on exercises
+                        data: [35, 30, 15, 20], 
                         backgroundColor: ['#ea580c', '#44403c', '#d6d3d1', '#f97316'],
                         borderWidth: 0
                     }]
@@ -1136,7 +1118,7 @@
                     labels: ['Day 1', 'Day 2', 'Day 3'],
                     datasets: [{
                         label: 'Working Sets',
-                        data: [15, 16, 18], // Approx count from the routine
+                        data: [15, 16, 18], 
                         backgroundColor: '#78716c',
                         borderRadius: 4
                     }]
@@ -1150,8 +1132,13 @@
                 }
             });
             
-            // Start on Dashboard view
+            // Start on Dashboard view and setup dynamic render
             switchTab('home');
+            
+            // Re-render Day 2 if it was the hardcoded default to ensure JS consistency
+            if(document.getElementById('view-workout') && !document.getElementById('view-workout').classList.contains('hidden')) {
+                 renderWorkout('day2');
+            }
         });
 
     </script>
