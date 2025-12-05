@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FitFlow 3-Day Interactive Trainer</title>
+    <title>FitFlow Interactive Trainer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -41,25 +41,21 @@
             max-height: 400px;
             margin: 0 auto;
         }
+        
+        /* Modal Backdrop */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
     </style>
-    <!-- Chosen Palette: Warm Neutrals (Stone) with Burnt Orange Accents -->
-    <!-- Application Structure Plan: 
-         1. Dashboard (Home): High-level overview of the program, visualization of the training split, and intensity estimation.
-         2. Dynamic Workout Views: A single JavaScript-driven view that renders Day 1, 2, or 3 based on selection.
-            - Structure: Accordion-style blocks for each training section (Warm Up, Strength, Lunge, etc.).
-            - Interaction: Checkboxes for tracking completed sets.
-            - Interaction: Integrated "Rest" buttons that trigger a countdown timer overlay.
-         3. Navigation: Simple tabbed interface to switch between Home and the 3 workout days.
-         Reasoning: Users need to focus on one day at a time while training. The dashboard helps plan the week, while the workout view is task-oriented.
-    -->
-    <!-- Visualization & Content Choices:
-         1. Program Balance (Doughnut Chart): Shows the distribution of focus (Lower Body, Upper Body, Core, Cardio) to help the user understand the holistic nature of the plan.
-         2. Volume Analysis (Bar Chart): Compares the number of sets per day to estimate time commitment.
-         3. Interactive Checklists: Replaces static text to give a sense of progress.
-         4. Rest Timers: Directly functionalizes the "25s Rest" text from the report.
-         5. Unicode Icons: Visual cues without external assets.
-    -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 </head>
 <body class="bg-stone-50 text-stone-800 font-sans antialiased min-h-screen flex flex-col">
 
@@ -80,20 +76,46 @@
         </div>
     </nav>
 
-    <!-- Main Content Area -->
-    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+    <!-- Global Timer Overlay (Hidden by default) -->
+    <div id="timer-overlay" class="fixed inset-0 bg-stone-900/90 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm transition-opacity">
+        <div class="text-stone-300 text-lg mb-4">Rest & Recover</div>
+        <div id="timer-display" class="text-8xl font-mono font-bold text-white mb-8">00:00</div>
+        <div class="flex space-x-4">
+            <button onclick="addTime(10)" class="bg-stone-700 hover:bg-stone-600 text-white px-6 py-3 rounded-full font-medium transition">+10s</button>
+            <button onclick="stopTimer()" class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-full font-bold transition">Skip / Done</button>
+        </div>
+    </div>
 
-        <!-- Global Timer Overlay (Hidden by default) -->
-        <div id="timer-overlay" class="fixed inset-0 bg-stone-900/90 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm transition-opacity">
-            <div class="text-stone-300 text-lg mb-4">Rest & Recover</div>
-            <div id="timer-display" class="text-8xl font-mono font-bold text-white mb-8">00:00</div>
-            <div class="flex space-x-4">
-                <button onclick="addTime(10)" class="bg-stone-700 hover:bg-stone-600 text-white px-6 py-3 rounded-full font-medium transition">+10s</button>
-                <button onclick="stopTimer()" class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-full font-bold transition">Skip / Done</button>
+    <!-- Exercise Detail Modal -->
+    <div id="detail-modal" class="modal-backdrop hidden" onclick="hideExerciseDetails()">
+        <div class="bg-white rounded-xl shadow-2xl p-6 w-11/12 max-w-2xl max-h-[90vh] overflow-y-auto" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center border-b pb-3 mb-4">
+                <h2 id="modal-title" class="text-2xl font-bold text-stone-900">Exercise Details</h2>
+                <button onclick="hideExerciseDetails()" class="text-stone-400 hover:text-stone-700">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Image/Placeholder Column -->
+                <div>
+                    <div id="modal-image-placeholder" class="bg-stone-100 rounded-lg flex items-center justify-center border-dashed border-2 border-stone-300 aspect-video md:aspect-square">
+                        <p class="text-stone-500 p-4 text-center">Image for: <strong id="modal-exercise-name"></strong></p>
+                    </div>
+                    <p class="text-xs text-stone-400 mt-2 text-center">
+                        <span class="font-bold text-orange-600">Note:</span> Image is a placeholder. In a live app, this would be a GIF/Video.
+                    </p>
+                </div>
+                <!-- Content Column -->
+                <div id="modal-content" class="text-stone-600 space-y-4">
+                    <!-- Dynamic content injected here -->
+                </div>
             </div>
         </div>
+    </div>
 
-        <!-- HOME VIEW: Dashboard -->
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-5xl">
+
+        <!-- HOME VIEW: Dashboard (Content remains the same) -->
         <div id="view-home" class="animate-fade-in space-y-8">
             <!-- Intro Section -->
             <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 sm:p-10">
@@ -101,7 +123,7 @@
                 <p class="text-lg text-stone-600 leading-relaxed max-w-3xl">
                     This interactive program is designed for a balanced physique, focusing on functional strength, hypertrophy, and metabolic conditioning. 
                     Perform these sessions with at least one rest day in between (e.g., Monday, Wednesday, Friday).
-                    Select a day above to begin your guided workout.
+                    Select a day above to begin your guided workout. Click the 'ⓘ' icon next to any exercise for a visual guide.
                 </p>
                 <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
@@ -190,7 +212,238 @@
 
     <!-- JavaScript Logic -->
     <script>
-        // --- DATA STORE ---
+        // --- DATA STORE (EXERCISE DETAILS) ---
+        const exerciseDetails = {
+            "Air Squat": {
+                target: "Quadriceps, Glutes, Hips",
+                description: "Squatting without weight. Focus on sitting back as if to sit in a chair, keeping your chest up and back straight. Hips should drop below the knees.",
+                tip: "Engage your core to maintain a neutral spine. Drive through your heels on the ascent."
+            },
+            "Good Morning": {
+                target: "Hamstrings, Glutes, Lower Back",
+                description: "Stand with hands behind head (or holding a light bar/band). Hinge at the hips, lowering your torso until parallel to the floor, maintaining a slight bend in the knees. Keep your back flat.",
+                tip: "This is a hamstring stretch and dynamic warm-up, not a max lift. Focus on the stretch at the bottom."
+            },
+            "Hamstring Scoops": {
+                target: "Hamstrings (Dynamic Stretch)",
+                description: "Walk forward, alternating legs. For each step, keep the front leg straight, scoop your hands towards your toes, feeling a stretch in the hamstring. Keep your back straight.",
+                tip: "It's about movement and blood flow, not depth. Keep it fluid."
+            },
+            "Romanian Deadlift (RDL)": {
+                target: "Hamstrings, Glutes, Lower Back",
+                description: "Starting upright, keep the legs relatively straight (soft bend). Lower the weight by pushing your hips back, keeping the barbell close to your legs. Stop just below the knees or when your back starts to round. Squeeze glutes to stand back up.",
+                tip: "The movement comes from the hip hinge. Imagine showing the person behind you the logo on your shirt."
+            },
+            "Walking Lunge - Alternating": {
+                target: "Quadriceps, Glutes, Hip Flexors",
+                description: "Take a large step forward and lower your hips until both knees are bent at a 90-degree angle. Ensure the front knee doesn't go past the toes. Push off the front foot to bring the back leg forward, continuing the walk.",
+                tip: "Keep your torso vertical. Use controlled descent and an explosive push-off."
+            },
+            "Lateral Bear Crawl": {
+                target: "Core Stability, Shoulders, Quads",
+                description: "Start on hands and knees (bear position). Move sideways, simultaneously moving the hand and foot on the same side, keeping the hips low and the back flat. Focus on anti-rotation.",
+                tip: "Imagine balancing a glass of water on your lower back. Small steps are better than big ones."
+            },
+            "High Plank Leg Lift": {
+                target: "Core Anti-Rotation, Glutes, Hips",
+                description: "In a high plank position (top of a push-up), lift one leg slightly off the ground, squeezing the glute. Lower slowly and alternate. Keep the hips level and minimize sway.",
+                tip: "The goal is to prevent your hips from twisting. Go slow and focus on the glute squeeze."
+            },
+            "Squat": {
+                target: "Quadriceps, Glutes, Adductors",
+                description: "Lower into a squat, breaking parallel if comfortable, keeping your chest high. Drive back up through the full foot.",
+                tip: "Maintain tension at the bottom of the movement. Breathe in on the way down, out on the way up."
+            },
+            "Squat Pulse": {
+                target: "Quadriceps Endurance",
+                description: "Remain at the bottom half of the squat position (from parallel to about halfway up). Perform small, fast bouncing movements (pulses).",
+                tip: "This is a burnout set. Feel the burn in your quads and maintain form despite fatigue."
+            },
+            "Glute Bridge": {
+                target: "Glutes, Hamstrings",
+                description: "Lie on your back with knees bent and feet flat on the floor. Drive your hips up by squeezing your glutes until your body forms a straight line from shoulders to knees. Lower slowly.",
+                tip: "Ensure your lower back doesn't arch excessively at the top. Focus the contraction solely in the glutes."
+            },
+            "Glute Bridge Walk out": {
+                target: "Hamstrings (Isolation), Glutes",
+                description: "Start in a Glute Bridge position. Slowly walk your feet away from your body a few steps, then walk them back in. Keep your hips elevated the entire time.",
+                tip: "This significantly increases hamstring load. Move slowly and deliberately to avoid cramping."
+            },
+            "Ice Skater": {
+                target: "Cardio, Lateral Strength, Glutes",
+                description: "Leap laterally from one foot to the other, sweeping the opposite foot behind you. Use your arms for balance and try to cover as much ground as possible.",
+                tip: "Make it explosive and aim for soft landings to protect your joints."
+            },
+            "Calf Raise": {
+                target: "Calves (Gastrocnemius, Soleus)",
+                description: "Stand and push up onto the balls of your feet, contracting your calves fully at the peak. Lower slowly, controlling the eccentric phase.",
+                tip: "Hold onto a wall for balance if needed. Use a full range of motion."
+            },
+            "Seated Forward fold": {
+                target: "Hamstrings, Lower Back (Stretch)",
+                description: "Sit with legs straight out. Reach towards your toes or shins, folding at the hips. Relax your neck and shoulders.",
+                tip: "Focus on deepening the stretch with each exhale. It’s okay if you can’t touch your toes."
+            },
+            "Supine Knee to chest": {
+                target: "Lower Back, Glutes (Stretch)",
+                description: "Lie on your back and pull one or both knees towards your chest. Hold to feel a gentle stretch in the lower back and glutes.",
+                tip: "Keep your shoulders relaxed and flat on the floor."
+            },
+            "Child's pose": {
+                target: "Upper Back, Shoulders, Hips (Relaxation)",
+                description: "Kneel on the floor, sitting back on your heels. Fold forward, resting your forehead on the ground and extending your arms forward.",
+                tip: "A restorative pose. Focus on deep, calming breaths."
+            },
+            "Arm Circles": {
+                target: "Shoulders, Upper Back (Warm-up)",
+                description: "Stand tall and perform small, controlled circles with your arms. Start small and gradually increase the size. Switch direction (forward/backward) halfway through the time.",
+                tip: "Keep the rest of your body stable."
+            },
+            "Thread the Needle": {
+                target: "Thoracic Spine (Rotation), Shoulders",
+                description: "Start on hands and knees. Thread one arm underneath the other, lowering your shoulder and head towards the floor, rotating your torso.",
+                tip: "Excellent for improving mobility in the upper back."
+            },
+            "Cat-Cow": {
+                target: "Spine Mobility, Core Warm-up",
+                description: "Start on hands and knees. Inhale, dropping your belly and arching your back (Cow). Exhale, rounding your back and tucking your chin (Cat). Move slowly between the two.",
+                tip: "Synchronize the movement with your breath."
+            },
+            "Push-ups": {
+                target: "Chest (Pecs), Shoulders (Anterior Deltoid), Triceps",
+                description: "Start in a plank position. Lower your chest towards the floor by bending your elbows (keeping them close to your body for triceps, or wider for chest). Push back up fully extending the arms.",
+                tip: "Maintain a straight line from head to heels. If needed, perform on your knees."
+            },
+            "Bent-Over Row": {
+                target: "Back (Lats, Rhomboids), Biceps",
+                description: "Hinge at the hips until your torso is nearly parallel to the floor, holding weights. Pull the weights towards your chest, squeezing your shoulder blades together. Lower slowly.",
+                tip: "Avoid standing up straight as you pull. Maintain the hinged position."
+            },
+            "Rear Delt Fly": {
+                target: "Shoulders (Posterior Deltoid), Upper Back",
+                description: "Start in the Bent-Over Row position. With lighter weights and slightly bent elbows, raise your arms out to the sides until parallel to the floor. Focus on the muscles in the upper back/rear shoulder.",
+                tip: "Keep the movement smooth; avoid momentum. Think about pulling your elbows back, not lifting the weights."
+            },
+            "Plank": {
+                target: "Core (Anti-Extension)",
+                description: "Hold a push-up or forearm position, maintaining a straight line from head to heels. Brace your core and glutes tightly.",
+                tip: "Do not let your hips sag or hike up. Look straight down."
+            },
+            "Side Plank - Right": {
+                target: "Core (Obliques, Anti-Lateral Flexion)",
+                description: "Start on your side, supported by your right forearm or hand. Lift your hips until your body forms a straight line. Hold.",
+                tip: "Keep your feet stacked or staggered. Focus on pushing the bottom hip up."
+            },
+            "Side Plank - Left": {
+                target: "Core (Obliques, Anti-Lateral Flexion)",
+                description: "Start on your side, supported by your left forearm or hand. Lift your hips until your body forms a straight line. Hold.",
+                tip: "This trains core stability and anti-rotation."
+            },
+            "Russian Twist": {
+                target: "Core (Obliques, Rectus Abdominis)",
+                description: "Sit on the floor, lean back slightly (maintaining a straight back), and lift your feet (or keep them on the floor). Rotate your torso from side to side, touching the floor with your hands.",
+                tip: "Control the movement; avoid throwing your arms. The rotation should come from the torso, not just the arms."
+            },
+            "Bicycle Crunch": {
+                target: "Core (Rectus Abdominis, Obliques)",
+                description: "Lie on your back, hands behind your head. Bring your right elbow to your left knee while straightening your right leg. Alternate sides in a pedaling motion.",
+                tip: "Focus on bringing the shoulder blade off the floor, not just the elbow to the knee."
+            },
+            "High Knees": {
+                target: "Cardio, Quads, Hip Flexors",
+                description: "Run in place, bringing your knees up as high as possible, aiming for hip height. Move your arms rhythmically.",
+                tip: "Focus on speed and height. Keep it explosive."
+            },
+            "Triceps Dips": {
+                target: "Triceps, Shoulders (Anterior Deltoid)",
+                description: "Use a stable bench or chair. Place hands shoulder-width apart, fingers forward. Lower your body until your elbows are at 90 degrees, then push back up. Keep your back close to the bench.",
+                tip: "Keep your shoulders down and away from your ears."
+            },
+            "Cross-Body Shoulder Stretch": {
+                target: "Shoulders (Deltoids)",
+                description: "Extend one arm straight across your chest and use your opposite arm to gently pull the extended arm closer to your body.",
+                tip: "Hold the stretch without bouncing. Breathe deeply."
+            },
+            "Overhead Triceps Stretch": {
+                target: "Triceps, Lats",
+                description: "Raise one arm overhead, bend the elbow, and drop your hand behind your head. Use the opposite hand to gently push the elbow down.",
+                tip: "Keep your head up and chest open."
+            },
+            "Cobra Pose": {
+                target: "Abs (Stretch), Lower Back (Extension)",
+                description: "Lie face down, hands under shoulders. Push up slightly, arching your upper back while keeping your hips on the ground.",
+                tip: "A gentle extension for the core and spine."
+            },
+            "Jumping Jacks": {
+                target: "Full Body Cardio Warm-up",
+                description: "Jump while simultaneously raising your arms overhead and spreading your legs. Reverse the motion to return to the starting position.",
+                tip: "Maintain a steady, rhythmic pace."
+            },
+            "Forward Lunges": {
+                target: "Quads, Glutes, Hip Flexors (Dynamic)",
+                description: "Step forward into a lunge, alternating legs. Use a controlled tempo.",
+                tip: "Focus on range of motion and warming up the joints."
+            },
+            "Torso Twists": {
+                target: "Core Rotation, Obliques (Warm-up)",
+                description: "Stand with feet shoulder-width apart, arms bent. Rotate your torso from side to side, letting your arms swing naturally.",
+                tip: "Keep your hips relatively stable; the movement is focused in the upper body."
+            },
+            "Burpees": {
+                target: "Full Body Cardio & Conditioning",
+                description: "From standing, squat down, kick feet back into a plank, jump feet back in, and explode into a jump with hands overhead.",
+                tip: "Maintain high energy. If fatigue hits, step back instead of jumping back (No push-up option)."
+            },
+            "Jump Lunges": {
+                target: "Quads, Glutes, Explosive Power",
+                description: "Start in a lunge. Jump up and switch the position of your feet in mid-air, landing softly in the opposite lunge position.",
+                tip: "Highly demanding. Use a full range of motion but prioritize a soft, controlled landing."
+            },
+            "Commando Plank": {
+                target: "Core (Anti-Extension), Shoulders",
+                description: "Start in a high plank. Transition one forearm down to the floor, then the other, landing in a low plank. Reverse the movement to return to a high plank. Alternate the leading arm.",
+                tip: "Keep your hips as still as possible throughout the transition."
+            },
+            "Thrusters": {
+                target: "Quads, Shoulders, Full Body Coordination",
+                description: "Start with weights held at the shoulders. Drop into a full squat. Explode out of the squat, using the momentum to drive the weights directly overhead (Overhead Press). Bring the weights back to the shoulders and repeat.",
+                tip: "It's one fluid movement. The legs do most of the work to generate power for the press."
+            },
+            "Heel Touches": {
+                target: "Obliques, Side Core",
+                description: "Lie on your back, knees bent, arms at your sides. Crunch sideways, trying to touch your right heel with your right hand, then your left heel with your left hand. Keep your neck relaxed.",
+                tip: "Focus on the side crunch, not just the reach of the arm."
+            },
+            "Stationary Run": {
+                target: "Cardio, Endurance",
+                description: "Run in place at a medium pace. Unlike High Knees, the focus is on sustained movement rather than maximal height.",
+                tip: "Maintain a steady effort to keep your heart rate elevated."
+            },
+            "Standing Quadriceps Stretch": {
+                target: "Quadriceps",
+                description: "Stand tall, pull one foot towards your glutes with the same-side hand. Keep your knees aligned and your hips tucked forward slightly.",
+                tip: "Use a wall for balance if necessary. Only pull until you feel a comfortable stretch."
+            },
+            "Floor Hamstring Stretch": {
+                target: "Hamstrings (Static)",
+                description: "Sit on the floor. Loop a band or towel around one foot and gently pull it toward you, keeping the leg straight. Alternatively, reach for your toes.",
+                tip: "Hold for 30 seconds or more. Do not bounce."
+            },
+            "Supine Spinal Twist": {
+                target: "Spine, Obliques, Shoulders (Relaxation)",
+                description: "Lie on your back, extend arms out to the sides. Drop your knees to one side, keeping your shoulders flat on the floor, and turn your head the opposite way.",
+                tip: "Excellent for spinal decompression after heavy lifting."
+            },
+            "Savasana (Corpse Pose)": {
+                target: "Mind, Nervous System (Recovery)",
+                description: "Lie flat on your back, arms slightly away from the body, palms up. Close your eyes and completely relax every muscle. Focus on your breath.",
+                tip: "Stay for 1-5 minutes. This is crucial for recovery and cooling down the nervous system."
+            }
+            // Add other exercises as needed
+        };
+
+
+        // --- DATA STORE (WORKOUTS) ---
         // Sourced directly from the "3-Day Training Program" markdown.
         const programData = {
             day1: {
@@ -569,6 +822,21 @@
         }
 
         // --- RENDER LOGIC ---
+        function getInfoButton(exerciseName) {
+            // This is the clickable info button element
+            const sanitizedName = exerciseName.replace(/"/g, '&quot;');
+            // Check if details exist before adding the button (optional, but cleaner)
+            if (exerciseDetails[exerciseName]) {
+                 return `
+                    <button onclick="showExerciseDetails('${sanitizedName}')" 
+                            class="text-xs text-orange-500 hover:text-orange-700 font-bold ml-2 transition-colors focus:outline-none">
+                        ⓘ
+                    </button>
+                `;
+            }
+            return ''; // No button if no details are available
+        }
+
         function renderWorkout(dayId) {
             const data = programData[dayId];
             if (!data) return;
@@ -606,9 +874,10 @@
                             <li class="flex items-center justify-between">
                                 <div class="flex items-center space-x-3">
                                     <input type="checkbox" id="${uniqueId}" onchange="updateProgress()" class="w-5 h-5 text-orange-600 rounded focus:ring-orange-500 border-gray-300">
-                                    <div>
+                                    <div class="flex items-center">
                                         <span class="font-medium text-stone-800">${ex.name}</span>
-                                        ${ex.note ? `<span class="text-xs text-stone-500 block">${ex.note}</span>` : ''}
+                                        ${getInfoButton(ex.name)}
+                                        ${ex.note ? `<span class="text-xs text-stone-500 block ml-2">${ex.note}</span>` : ''}
                                     </div>
                                 </div>
                                 <span class="text-stone-600 bg-stone-100 px-2 py-1 rounded text-sm font-mono">${ex.duration}</span>
@@ -643,9 +912,10 @@
                                     <li class="flex items-center justify-between">
                                         <div class="flex items-center space-x-3">
                                             <input type="checkbox" id="${checkId}" onchange="updateProgress()" class="w-5 h-5 text-orange-600 rounded focus:ring-orange-500 border-gray-300">
-                                            <div>
+                                            <div class="flex items-center">
                                                 <span class="font-medium text-stone-800">${ex.name}</span>
-                                                ${ex.note ? `<span class="text-xs text-stone-500 block">${ex.note}</span>` : ''}
+                                                ${getInfoButton(ex.name)}
+                                                ${ex.note ? `<span class="text-xs text-stone-500 ml-2">${ex.note}</span>` : ''}
                                             </div>
                                         </div>
                                         <span class="text-stone-600 bg-stone-100 px-2 py-1 rounded text-sm font-mono">${ex.reps || ex.duration}</span>
@@ -674,7 +944,18 @@
                             <div class="mb-4">
                                 <h4 class="font-bold text-stone-700 mb-2">${section.subtitle}</h4>
                                 <ul class="list-disc list-inside text-stone-600 space-y-1 ml-2">
-                                    ${section.items.map(item => `<li>${item}</li>`).join('')}
+                                    ${section.items.map(item => {
+                                        // Extract exercise name from mixed items (e.g., "30 sec Ice Skater")
+                                        const nameMatch = item.match(/^(.*?)\s\d/); 
+                                        const exerciseName = nameMatch ? nameMatch[1].trim() : item.trim().replace(/\(.*\)/g, '').trim(); // Fallback for cool-downs
+                                        
+                                        return `
+                                            <li class="flex items-center">
+                                                <span>${item}</span>
+                                                ${getInfoButton(exerciseName)}
+                                            </li>
+                                        `;
+                                    }).join('')}
                                 </ul>
                             </div>
                         `;
@@ -695,6 +976,51 @@
             
             // Re-calc checks visual
             updateProgress();
+        }
+
+        // --- EXERCISE DETAILS MODAL LOGIC ---
+        function showExerciseDetails(exerciseName) {
+            const sanitizedName = exerciseName.replace(/&quot;/g, '"');
+            const details = exerciseDetails[sanitizedName];
+            
+            if (!details) {
+                // Handle case where details are missing
+                document.getElementById('modal-title').innerText = sanitizedName;
+                document.getElementById('modal-exercise-name').innerText = sanitizedName;
+                document.getElementById('modal-content').innerHTML = `
+                    <p class="text-red-500 font-bold">Details Indisponibles</p>
+                    <p>Aucune description ou image n'est disponible pour l'exercice "${sanitizedName}".</p>
+                `;
+            } else {
+                // Populate modal with dynamic data
+                document.getElementById('modal-title').innerText = sanitizedName;
+                document.getElementById('modal-exercise-name').innerText = sanitizedName;
+                
+                document.getElementById('modal-content').innerHTML = `
+                    <div class="space-y-4">
+                        <div class="p-3 bg-orange-50 rounded-lg border border-orange-100">
+                            <h4 class="font-bold text-sm uppercase text-orange-700 mb-1">Cible Musculaire</h4>
+                            <p class="font-medium text-stone-800">${details.target}</p>
+                        </div>
+                        
+                        <div>
+                            <h4 class="font-bold text-stone-700 mb-2">Description de l'Exécution</h4>
+                            <p class="text-stone-600">${details.description}</p>
+                        </div>
+
+                        <div class="border-t border-stone-200 pt-3">
+                            <h4 class="font-bold text-stone-700 mb-2">Conseil de Performance</h4>
+                            <p class="text-sm text-stone-500 italic">"${details.tip}"</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function hideExerciseDetails() {
+            document.getElementById('detail-modal').classList.add('hidden');
         }
 
         // --- PROGRESS LOGIC ---
@@ -722,7 +1048,7 @@
             const display = document.getElementById('timer-display');
             
             overlay.classList.remove('hidden');
-            display.classList.remove('text-red-500');
+            display.classList.remove('text-red-500', 'animate-pulse');
             display.classList.add('text-white');
             updateDisplay();
 
