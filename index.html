@@ -71,16 +71,22 @@
                     <button onclick="switchTab('day2')" id="nav-day2" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:text-stone-900 transition-colors bg-orange-50 text-orange-600">Day 2</button>
                     <button onclick="switchTab('day3')" id="nav-day3" class="nav-btn px-3 py-2 rounded-md text-sm font-medium hover:text-stone-900 transition-colors text-stone-500">Day 3</button>
                 </div>
+                <div class="flex items-center space-x-3">
+                    <select id="lang-toggle" onchange="setLanguage(this.value)" class="bg-stone-50 border border-stone-300 text-stone-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block p-2">
+                        <option value="EN">English</option>
+                        <option value="FR">Français</option>
+                    </select>
+                </div>
             </div>
         </div>
     </nav>
 
     <div id="timer-overlay" class="fixed inset-0 bg-stone-900/90 z-50 hidden flex flex-col items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="text-stone-300 text-lg mb-4">Rest &amp; Recover</div>
+        <div id="timer-rest-recover" class="text-stone-300 text-lg mb-4">Rest &amp; Recover</div>
         <div id="timer-display" class="text-8xl font-mono font-bold text-white mb-8">00:00</div>
         <div class="flex space-x-4">
             <button onclick="addTime(10)" class="bg-stone-700 hover:bg-stone-600 text-white px-6 py-3 rounded-full font-medium transition">+10s</button>
-            <button onclick="stopTimer()" class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-full font-bold transition">Skip / Done</button>
+            <button onclick="stopTimer()" id="timer-skip-done" class="bg-orange-600 hover:bg-orange-700 text-white px-8 py-3 rounded-full font-bold transition">Skip / Done</button>
         </div>
     </div>
 
@@ -111,8 +117,13 @@
 
         <div id="view-home" class="animate-fade-in space-y-8 hidden">
             <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 sm:p-10">
-                <h1 class="text-3xl sm:text-4xl font-bold text-stone-900 mb-4">Your 3-Day Training Plan</h1>
-                <p class="text-lg text-stone-600 leading-relaxed max-w-3xl">
+                
+                <div class="flex justify-center mb-6">
+                    <img src="workout_images/sylvie.jfif" alt="Inverted Row Exercise Demo" class="w-full max-w-lg rounded-xl shadow-lg border border-stone-200">
+                </div>
+
+                <h1 id="home-title" class="text-3xl sm:text-4xl font-bold text-stone-900 mb-4">Your 3-Day Training Plan</h1>
+                <p id="home-intro" class="text-lg text-stone-600 leading-relaxed max-w-3xl">
                     This interactive program is designed for a balanced physique, focusing on functional strength, hypertrophy, and metabolic conditioning. 
                     Perform these sessions with at least one rest day in between (e.g., Monday, Wednesday, Friday).
                     Select a day above to begin your guided workout. Click the 'ⓘ' icon next to any exercise for a visual guide.
@@ -120,34 +131,34 @@
                 <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
                         <div class="text-2xl mb-1">🦵</div>
-                        <h3 class="font-bold text-stone-900">Day 1: Lower Body</h3>
-                        <p class="text-sm text-stone-600 mt-1">Strength &amp; Hypertrophy focused on glutes, quads, and hamstrings.</p>
+                        <h3 id="home-day1-title" class="font-bold text-stone-900">Day 1: Lower Body</h3>
+                        <p id="home-day1-desc" class="text-sm text-stone-600 mt-1">Strength &amp; Hypertrophy focused on glutes, quads, and hamstrings.</p>
                     </div>
                     <div class="p-4 bg-stone-100 rounded-xl border border-stone-200">
                         <div class="text-2xl mb-1">💪</div>
-                        <h3 class="font-bold text-stone-900">Day 2: Upper &amp; Core</h3>
-                        <p class="text-sm text-stone-600 mt-1">Push/Pull mechanics combined with core stability and rotation.</p>
+                        <h3 id="home-day2-title" class="font-bold text-stone-900">Day 2: Upper & Core</h3>
+                        <p id="home-day2-desc" class="text-sm text-stone-600 mt-1">Push/Pull mechanics combined with core stability and rotation.</p>
                     </div>
                     <div class="p-4 bg-stone-100 rounded-xl border border-stone-200">
                         <div class="text-2xl mb-1">🔥</div>
-                        <h3 class="font-bold text-stone-900">Day 3: Full Body</h3>
-                        <p class="text-sm text-stone-600 mt-1">Metabolic conditioning, explosive movements, and endurance.</p>
+                        <h3 id="home-day3-title" class="font-bold text-stone-900">Day 3: Full Body</h3>
+                        <p id="home-day3-desc" class="text-sm text-stone-600 mt-1">Metabolic conditioning, explosive movements, and endurance.</p>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-                    <h2 class="text-xl font-bold text-stone-800 mb-2">Training Focus Distribution</h2>
-                    <p class="text-sm text-stone-500 mb-6">Visualizing the balance between muscle groups and energy systems.</p>
+                    <h2 id="chart1-title" class="text-xl font-bold text-stone-800 mb-2">Training Focus Distribution</h2>
+                    <p id="chart1-subtitle" class="text-sm text-stone-500 mb-6">Visualizing the balance between muscle groups and energy systems.</p>
                     <div class="chart-wrapper">
                         <canvas id="balanceChart"></canvas>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
-                    <h2 class="text-xl font-bold text-stone-800 mb-2">Estimated Volume (Sets)</h2>
-                    <p class="text-sm text-stone-500 mb-6">Total working sets per day (excluding warm-ups).</p>
+                    <h2 id="chart2-title" class="text-xl font-bold text-stone-800 mb-2">Estimated Volume (Sets)</h2>
+                    <p id="chart2-subtitle" class="text-sm text-stone-500 mb-6">Total working sets per day (excluding warm-ups).</p>
                     <div class="chart-wrapper">
                         <canvas id="volumeChart"></canvas>
                     </div>
@@ -162,7 +173,7 @@
                     <p id="workout-subtitle" class="text-stone-500 mt-1">Push/Pull Strength &amp; Core Stability</p>
                 </div>
                 <div class="mt-4 md:mt-0 flex items-center space-x-3">
-                    <div class="text-sm font-medium text-stone-400">Progress</div>
+                    <div id="workout-progress" class="text-sm font-medium text-stone-400">Progress</div>
                     <div class="w-32 h-3 bg-stone-200 rounded-full overflow-hidden">
                         <div id="progress-bar" class="h-full bg-orange-500 transition-all duration-500" style="width: 0%"></div>
                     </div>
@@ -178,7 +189,7 @@
                 </div>
 
             <div class="mt-12 text-center pb-12">
-                <button onclick="finishWorkout()" class="bg-stone-900 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-orange-600 transition-colors shadow-lg transform hover:-translate-y-1">
+                <button onclick="finishWorkout()" id="workout-complete-btn" class="bg-stone-900 text-white px-10 py-4 rounded-xl font-bold text-lg hover:bg-orange-600 transition-colors shadow-lg transform hover:-translate-y-1">
                     Complete Workout
                 </button>
             </div>
@@ -189,640 +200,1393 @@
     <footer class="bg-stone-900 text-stone-400 py-8 mt-auto">
         <div class="max-w-7xl mx-auto px-4 text-center">
             <p class="mb-2">FitFlow Interactive Trainer</p>
-            <p class="text-xs text-stone-600">Generated based on provided Source Report.</p>
+            <p id="footer-text" class="text-xs text-stone-600">Generated based on provided Source Report.</p>
         </div>
     </footer>
 
     <script>
-        // --- DATA STORE (EXERCISE DETAILS) ---
-        const exerciseDetails = {
-            "Air Squat": {
-                target: "Quadriceps, Glutes, Hips",
-                description: "Squatting without weight. Focus on sitting back as if to sit in a chair, keeping your chest up and back straight. Hips should drop below the knees.",
-                tip: "Engage your core to maintain a neutral spine. Drive through your heels on the ascent.",
-		image: "workout_images/air_squat.png"
-            },
-            "Good Morning": {
-                target: "Hamstrings, Glutes, Lower Back",
-                description: "Stand with hands behind head (or holding a light bar/band). Hinge at the hips, lowering your torso until parallel to the floor, maintaining a slight bend in the knees. Keep your back flat.",
-                tip: "This is a hamstring stretch and dynamic warm-up, not a max lift. Focus on the stretch at the bottom.",
-		image: "workout_images/good_morning.png"
-	    },
-            "Hamstring Scoops": {
-                target: "Hamstrings (Dynamic Stretch)",
-                description: "Walk forward, alternating legs. For each step, keep the front leg straight, scoop your hands towards your toes, feeling a stretch in the hamstring. Keep your back straight.",
-                tip: "It's about movement and blood flow, not depth. Keep it fluid.",
-		image: "workout_images/hamstring_scoops.png"
-            },
-            "Romanian Deadlift (RDL)": {
-                target: "Hamstrings, Glutes, Lower Back",
-                description: "Starting upright, keep the legs relatively straight (soft bend). Lower the weight by pushing your hips back, keeping the barbell close to your legs. Stop just below the knees or when your back starts to round. Squeeze glutes to stand back up.",
-                tip: "The movement comes from the hip hinge. Imagine showing the person behind you the logo on your shirt.",
-		image: "workout_images/rdl.png"
-            },
-            "Walking Lunge - Alternating": {
-                target: "Quadriceps, Glutes, Hip Flexors",
-                description: "Take a large step forward and lower your hips until both knees are bent at a 90-degree angle. Ensure the front knee doesn't go past the toes. Push off the front foot to bring the back leg forward, continuing the walk.",
-                tip: "Keep your torso vertical. Use controlled descent and an explosive push-off.",
-		image: "workout_images/walking_lunge.png"
-            },
-            "Lateral Bear Crawl": {
-                target: "Core Stability, Shoulders, Quads",
-                description: "Start on hands and knees (bear position). Move sideways, simultaneously moving the hand and foot on the same side, keeping the hips low and the back flat. Focus on anti-rotation.",
-                tip: "Imagine balancing a glass of water on your lower back. Small steps are better than big ones.", 
-		image: "workout_images/side_bear_crawl.png"
-            },
-            "High Plank Leg Lift": {
-                target: "Core Anti-Rotation, Glutes, Hips",
-                description: "In a high plank position (top of a push-up), lift one leg slightly off the ground, squeezing the glute. Lower slowly and alternate. Keep the hips level and minimize sway.",
-                tip: "The goal is to prevent your hips from twisting. Go slow and focus on the glute squeeze.",
-		image: "workout_images/high_plank_leg_lift.png"
-            },
-            "Squat": {
-                target: "Quadriceps, Glutes, Adductors",
-                description: "Lower into a squat, breaking parallel if comfortable, keeping your chest high. Drive back up through the full foot.",
-                tip: "Maintain tension at the bottom of the movement. Breathe in on the way down, out on the way up.",
-		image: "workout_images/squat.png"
-            },
-            "Squat Pulse": {
-                target: "Quadriceps Endurance",
-                description: "Remain at the bottom half of the squat position (from parallel to about halfway up). Perform small, fast bouncing movements (pulses).",
-                tip: "This is a burnout set. Feel the burn in your quads and maintain form despite fatigue.",
-		image: "workout_images/squat_pulse.png"
-            },
-            "Glute Bridge": {
-                target: "Glutes, Hamstrings",
-                description: "Lie on your back with knees bent and feet flat on the floor. Drive your hips up by squeezing your glutes until your body forms a straight line from shoulders to knees. Lower slowly.",
-                tip: "Ensure your lower back doesn't arch excessively at the top. Focus the contraction solely in the glutes.",
-		image: "workout_images/glute_bridge.png"
-            },
-            "Glute Bridge Walk out": {
-                target: "Hamstrings (Isolation), Glutes",
-                description: "Start in a Glute Bridge position. Slowly walk your feet away from your body a few steps, then walk them back in. Keep your hips elevated the entire time.",
-                tip: "This significantly increases hamstring load. Move slowly and deliberately to avoid cramping.",
-		image: "workout_images/glute_bridge_walk_out.png"
-            },
-            "Ice Skater": {
-                target: "Cardio, Lateral Strength, Glutes",
-                description: "Leap laterally from one foot to the other, sweeping the opposite foot behind you. Use your arms for balance and try to cover as much ground as possible.",
-                tip: "Make it explosive and aim for soft landings to protect your joints.",
-		image: "workout_images/ice_skater.png"
-            },
-            "Calf Raise": {
-                target: "Calves (Gastrocnemius, Soleus)",
-                description: "Stand and push up onto the balls of your feet, contracting your calves fully at the peak. Lower slowly, controlling the eccentric phase.",
-                tip: "Hold onto a wall for balance if needed. Use a full range of motion.",
-		image: "workout_images/calf_raise.png"
-            },
-            "Seated Forward fold": {
-                target: "Hamstrings, Lower Back (Stretch)",
-                description: "Sit with legs straight out. Reach towards your toes or shins, folding at the hips. Relax your neck and shoulders.",
-                tip: "Focus on deepening the stretch with each exhale. It’s okay if you can’t touch your toes.",
-		image: "seated_forward_fold.png"
-            },
-            "Supine Knee to chest": {
-                target: "Lower Back, Glutes (Stretch)",
-                description: "Lie on your back and pull one or both knees towards your chest. Hold to feel a gentle stretch in the lower back and glutes.",
-                tip: "Keep your shoulders relaxed and flat on the floor.",
-		image: "workout_images/knee_to_chest.png"
-            },
-            "Child's pose": {
-                target: "Upper Back, Shoulders, Hips (Relaxation)",
-                description: "Kneel on the floor, sitting back on your heels. Fold forward, resting your forehead on the ground and extending your arms forward.",
-                tip: "A restorative pose. Focus on deep, calming breaths.",
-		image: "workout_images/child_pose.png"
-            },
-            "Arm Circles": {
-                target: "Shoulders, Upper Back (Warm-up)",
-                description: "Stand tall and perform small, controlled circles with your arms. Start small and gradually increase the size. Switch direction (forward/backward) halfway through the time.",
-                tip: "Keep the rest of your body stable.",
-		image: "workout_images/arm_circle.png"
-            },
-            "Thread the Needle": {
-                target: "Thoracic Spine (Rotation), Shoulders",
-                description: "Start on hands and knees. Thread one arm underneath the other, lowering your shoulder and head towards the floor, rotating your torso.",
-                tip: "Excellent for improving mobility in the upper back.",
-		image: "workout_images/thread_the_needle.png"
-            },
-            "Cat-Cow": {
-                target: "Spine Mobility, Core Warm-up",
-                description: "Start on hands and knees. Inhale, dropping your belly and arching your back (Cow). Exhale, rounding your back and tucking your chin (Cat). Move slowly between the two.",
-                tip: "Synchronize the movement with your breath.",
-		image: "workout_images/cat_cow.png"
-            },
-            "Push-ups": {
-                target: "Chest (Pecs), Shoulders (Anterior Deltoid), Triceps",
-                description: "Start in a plank position. Lower your chest towards the floor by bending your elbows (keeping them close to your body for triceps, or wider for chest). Push back up fully extending the arms.",
-                tip: "Maintain a straight line from head to heels. If needed, perform on your knees.",
-		image: "workout_images/PushUps.png"
-            },
-            "Inverted Row": {
-                target: "Back (Lats, Rhomboids), Biceps, Core",
-                description: "Lie underneath a sturdy table or desk. Grip the edge with hands shoulder-width apart. Pull your chest up to the table edge, keeping your body in a straight plank line from head to heels. Lower slowly.",
-                tip: "Keep your core tight and don't let your hips sag. Ensure the table is heavy enough not to tip.",
-                image: "workout_images/inverted-row.png"
-            },
-            "Band Pull-Apart": {
-                target: "Rear Delts, Upper Back, Rotator Cuff",
-                description: "Hold a resistance band or towel with hands shoulder-width apart, arms extended straight in front of you. Pull your hands apart horizontally, squeezing your shoulder blades together until the band touches your chest. Control the return.",
-                tip: "Keep your elbows straight but soft. Do not shrug your shoulders up towards your ears.",
-		image: "workout_images/band-pull-apart.png"
-            },
-            "Plank": {
-                target: "Core (Anti-Extension)",
-                description: "Hold a push-up or forearm position, maintaining a straight line from head to heels. Brace your core and glutes tightly.",
-                tip: "Do not let your hips sag or hike up. Look straight down."
-            },
-            "Side Plank - Right": {
-                target: "Core (Obliques, Anti-Lateral Flexion)",
-                description: "Start on your side, supported by your right forearm or hand. Lift your hips until your body forms a straight line. Hold.",
-                tip: "Keep your feet stacked or staggered. Focus on pushing the bottom hip up."
-            },
-            "Side Plank - Left": {
-                target: "Core (Obliques, Anti-Lateral Flexion)",
-                description: "Start on your side, supported by your left forearm or hand. Lift your hips until your body forms a straight line. Hold.",
-                tip: "This trains core stability and anti-rotation."
-            },
-            "Russian Twist": {
-                target: "Core (Obliques, Rectus Abdominis)",
-                description: "Sit on the floor, lean back slightly (maintaining a straight back), and lift your feet (or keep them on the floor). Rotate your torso from side to side, touching the floor with your hands.",
-                tip: "Control the movement; avoid throwing your arms. The rotation should come from the torso, not just the arms.",
-		image: "workout_images/russian_twist.png"
+        // --- DATA STORE (TRANSLATIONS) ---
+        const translations = {
+            // ENGLISH TEXT STRINGS AND DATA
+            "EN": {
+                // Static Text
+                "nav_dashboard": "Dashboard",
+                "nav_day1": "Day 1",
+                "nav_day2": "Day 2",
+                "nav_day3": "Day 3",
+                "timer_rest_recover": "Rest & Recover",
+                "timer_skip_done": "Skip / Done",
+                "modal_image_note": "Image is a placeholder. In a live app, this would be a GIF/Video.",
+                "home_title": "Your 3-Day Training Plan",
+                "home_intro": "This interactive program is designed for a balanced physique, focusing on functional strength, hypertrophy, and metabolic conditioning. Perform these sessions with at least one rest day in between (e.g., Monday, Wednesday, Friday). Select a day above to begin your guided workout. Click the 'ⓘ' icon next to any exercise for a visual guide.",
+                "home_day1_title": "Day 1: Lower Body",
+                "home_day1_desc": "Strength & Hypertrophy focused on glutes, quads, and hamstrings.",
+                "home_day2_title": "Day 2: Upper & Core",
+                "home_day2_desc": "Push/Pull mechanics combined with core stability and rotation.",
+                "home_day3_title": "Day 3: Full Body",
+                "home_day3_desc": "Metabolic conditioning, explosive movements, and endurance.",
+                "chart1_title": "Training Focus Distribution",
+                "chart1_subtitle": "Visualizing the balance between muscle groups and energy systems.",
+                "chart2_title": "Estimated Volume (Sets)",
+                "chart2_subtitle": "Total working sets per day (excluding warm-ups).",
+                "workout_progress": "Progress",
+                "workout_complete_btn": "Complete Workout",
+                "footer_text": "Generated based on provided Source Report.",
+                "modal_details_missing_title": "Details Unavailable",
+                "modal_details_missing_body": "No description or image is available for the exercise",
+                "modal_target_title": "Target Muscle",
+                "modal_exec_title": "Execution Description",
+                "modal_tip_title": "Performance Tip",
+                "alert_complete": "Great job! Workout completed. Ensure you hydrate and rest.",
+                
+                // Exercise Data
+                "exerciseDetails": {
+                    "Air Squat": {
+                        target: "Quadriceps, Glutes, Hips",
+                        description: "Squatting without weight. Focus on sitting back as if to sit in a chair, keeping your chest up and back straight. Hips should drop below the knees.",
+                        tip: "Engage your core to maintain a neutral spine. Drive through your heels on the ascent.",
+                        image: "workout_images/air_squat.png"
+                    },
+                    "Good Morning": {
+                        target: "Hamstrings, Glutes, Lower Back",
+                        description: "Stand with hands behind head (or holding a light bar/band). Hinge at the hips, lowering your torso until parallel to the floor, maintaining a slight bend in the knees. Keep your back flat.",
+                        tip: "This is a hamstring stretch and dynamic warm-up, not a max lift. Focus on the stretch at the bottom.",
+                        image: "workout_images/good_morning.png"
+                    },
+                    "Hamstring Scoops": {
+                        target: "Hamstrings (Dynamic Stretch)",
+                        description: "Walk forward, alternating legs. For each step, keep the front leg straight, scoop your hands towards your toes, feeling a stretch in the hamstring. Keep your back straight.",
+                        tip: "It's about movement and blood flow, not depth. Keep it fluid.",
+                        image: "workout_images/hamstring_scoops.png"
+                    },
+                    "Romanian Deadlift (RDL)": {
+                        target: "Hamstrings, Glutes, Lower Back",
+                        description: "Starting upright, keep the legs relatively straight (soft bend). Lower the weight by pushing your hips back, keeping the barbell close to your legs. Stop just below the knees or when your back starts to round. Squeeze glutes to stand back up.",
+                        tip: "The movement comes from the hip hinge. Imagine showing the person behind you the logo on your shirt.",
+                        image: "workout_images/rdl.png"
+                    },
+                    "Walking Lunge - Alternating": {
+                        target: "Quadriceps, Glutes, Hip Flexors",
+                        description: "Take a large step forward and lower your hips until both knees are bent at a 90-degree angle. Ensure the front knee doesn't go past the toes. Push off the front foot to bring the back leg forward, continuing the walk.",
+                        tip: "Keep your torso vertical. Use controlled descent and an explosive push-off.",
+                        image: "workout_images/walking_lunge.png"
+                    },
+                    "Lateral Bear Crawl": {
+                        target: "Core Stability, Shoulders, Quads",
+                        description: "Start on hands and knees (bear position). Move sideways, simultaneously moving the hand and foot on the same side, keeping the hips low and the back flat. Focus on anti-rotation.",
+                        tip: "Imagine balancing a glass of water on your lower back. Small steps are better than big ones.", 
+                        image: "workout_images/side_bear_crawl.png"
+                    },
+                    "High Plank Leg Lift": {
+                        target: "Core Anti-Rotation, Glutes, Hips",
+                        description: "In a high plank position (top of a push-up), lift one leg slightly off the ground, squeezing the glute. Lower slowly and alternate. Keep the hips level and minimize sway.",
+                        tip: "The goal is to prevent your hips from twisting. Go slow and focus on the glute squeeze.",
+                        image: "workout_images/high_plank_leg_lift.png"
+                    },
+                    "Squat": {
+                        target: "Quadriceps, Glutes, Adductors",
+                        description: "Lower into a squat, breaking parallel if comfortable, keeping your chest high. Drive back up through the full foot.",
+                        tip: "Maintain tension at the bottom of the movement. Breathe in on the way down, out on the way up.",
+                        image: "workout_images/squat.png"
+                    },
+                    "Squat Pulse": {
+                        target: "Quadriceps Endurance",
+                        description: "Remain at the bottom half of the squat position (from parallel to about halfway up). Perform small, fast bouncing movements (pulses).",
+                        tip: "This is a burnout set. Feel the burn in your quads and maintain form despite fatigue.",
+                        image: "workout_images/squat_pulse.png"
+                    },
+                    "Glute Bridge": {
+                        target: "Glutes, Hamstrings",
+                        description: "Lie on your back with knees bent and feet flat on the floor. Drive your hips up by squeezing your glutes until your body forms a straight line from shoulders to knees. Lower slowly.",
+                        tip: "Ensure your lower back doesn't arch excessively at the top. Focus the contraction solely in the glutes.",
+                        image: "workout_images/glute_bridge.png"
+                    },
+                    "Glute Bridge Walk out": {
+                        target: "Hamstrings (Isolation), Glutes",
+                        description: "Start in a Glute Bridge position. Slowly walk your feet away from your body a few steps, then walk them back in. Keep your hips elevated the entire time.",
+                        tip: "This significantly increases hamstring load. Move slowly and deliberately to avoid cramping.",
+                        image: "workout_images/glute_bridge_walk_out.png"
+                    },
+                    "Ice Skater": {
+                        target: "Cardio, Lateral Strength, Glutes",
+                        description: "Leap laterally from one foot to the other, sweeping the opposite foot behind you. Use your arms for balance and try to cover as much ground as possible.",
+                        tip: "Make it explosive and aim for soft landings to protect your joints.",
+                        image: "workout_images/ice_skater.png"
+                    },
+                    "Calf Raise": {
+                        target: "Calves (Gastrocnemius, Soleus)",
+                        description: "Stand and push up onto the balls of your feet, contracting your calves fully at the peak. Lower slowly, controlling the eccentric phase.",
+                        tip: "Hold onto a wall for balance if needed. Use a full range of motion.",
+                        image: "workout_images/calf_raise.png"
+                    },
+                    "Seated Forward fold": {
+                        target: "Hamstrings, Lower Back (Stretch)",
+                        description: "Sit with legs straight out. Reach towards your toes or shins, folding at the hips. Relax your neck and shoulders.",
+                        tip: "Focus on deepening the stretch with each exhale. It’s okay if you can’t touch your toes.",
+                        image: "seated_forward_fold.png"
+                    },
+                    "Supine Knee to chest": {
+                        target: "Lower Back, Glutes (Stretch)",
+                        description: "Lie on your back and pull one or both knees towards your chest. Hold to feel a gentle stretch in the lower back and glutes.",
+                        tip: "Keep your shoulders relaxed and flat on the floor.",
+                        image: "workout_images/knee_to_chest.png"
+                    },
+                    "Child's pose": {
+                        target: "Upper Back, Shoulders, Hips (Relaxation)",
+                        description: "Kneel on the floor, sitting back on your heels. Fold forward, resting your forehead on the ground and extending your arms forward.",
+                        tip: "A restorative pose. Focus on deep, calming breaths.",
+                        image: "workout_images/child_pose.png"
+                    },
+                    "Arm Circles": {
+                        target: "Shoulders, Upper Back (Warm-up)",
+                        description: "Stand tall and perform small, controlled circles with your arms. Start small and gradually increase the size. Switch direction (forward/backward) halfway through the time.",
+                        tip: "Keep the rest of your body stable.",
+                        image: "workout_images/arm_circle.png"
+                    },
+                    "Thread the Needle": {
+                        target: "Thoracic Spine (Rotation), Shoulders",
+                        description: "Start on hands and knees. Thread one arm underneath the other, lowering your shoulder and head towards the floor, rotating your torso.",
+                        tip: "Excellent for improving mobility in the upper back.",
+                        image: "workout_images/thread_the_needle.png"
+                    },
+                    "Cat-Cow": {
+                        target: "Spine Mobility, Core Warm-up",
+                        description: "Start on hands and knees. Inhale, dropping your belly and arching your back (Cow). Exhale, rounding your back and tucking your chin (Cat). Move slowly between the two.",
+                        tip: "Synchronize the movement with your breath.",
+                        image: "workout_images/cat_cow.png"
+                    },
+                    "Push-ups": {
+                        target: "Chest (Pecs), Shoulders (Anterior Deltoid), Triceps",
+                        description: "Start in a plank position. Lower your chest towards the floor by bending your elbows (keeping them close to your body for triceps, or wider for chest). Push back up fully extending the arms.",
+                        tip: "Maintain a straight line from head to heels. If needed, perform on your knees.",
+                        image: "workout_images/PushUps.png"
+                    },
+                    "Inverted Row": {
+                        target: "Back (Lats, Rhomboids), Biceps, Core",
+                        description: "Lie underneath a sturdy table or desk. Grip the edge with hands shoulder-width apart. Pull your chest up to the table edge, keeping your body in a straight plank line from head to heels. Lower slowly.",
+                        tip: "Keep your core tight and don't let your hips sag. Ensure the table is heavy enough not to tip.",
+                        image: "inverted-row.jpg" // Fixed path from previous turns
+                    },
+                    "Band Pull-Apart": {
+                        target: "Rear Delts, Upper Back, Rotator Cuff",
+                        description: "Hold a resistance band or towel with hands shoulder-width apart, arms extended straight in front of you. Pull your hands apart horizontally, squeezing your shoulder blades together until the band touches your chest. Control the return.",
+                        tip: "Keep your elbows straight but soft. Do not shrug your shoulders up towards your ears.",
+                        image: "workout_images/band-pull-apart.png"
+                    },
+                    "Plank": {
+                        target: "Core (Anti-Extension)",
+                        description: "Hold a push-up or forearm position, maintaining a straight line from head to heels. Brace your core and glutes tightly.",
+                        tip: "Do not let your hips sag or hike up. Look straight down."
+                    },
+                    "Side Plank - Right": {
+                        target: "Core (Obliques, Anti-Lateral Flexion)",
+                        description: "Start on your side, supported by your right forearm or hand. Lift your hips until your body forms a straight line. Hold.",
+                        tip: "Keep your feet stacked or staggered. Focus on pushing the bottom hip up."
+                    },
+                    "Side Plank - Left": {
+                        target: "Core (Obliques, Anti-Lateral Flexion)",
+                        description: "Start on your side, supported by your left forearm or hand. Lift your hips until your body forms a straight line. Hold.",
+                        tip: "This trains core stability and anti-rotation."
+                    },
+                    "Russian Twist": {
+                        target: "Core (Obliques, Rectus Abdominis)",
+                        description: "Sit on the floor, lean back slightly (maintaining a straight back), and lift your feet (or keep them on the floor). Rotate your torso from side to side, touching the floor with your hands.",
+                        tip: "Control the movement; avoid throwing your arms. The rotation should come from the torso, not just the arms.",
+                        image: "workout_images/russian_twist.png"
 
-            },
-            "Bicycle Crunch": {
-                target: "Core (Rectus Abdominis, Obliques)",
-                description: "Lie on your back, hands behind your head. Bring your right elbow to your left knee while straightening your right leg. Alternate sides in a pedaling motion.",
-                tip: "Focus on bringing the shoulder blade off the floor, not just the elbow to the knee.",
-		image: "workout_images/bicycle_crunch"
-            },
-            "High Knees": {
-                target: "Cardio, Quads, Hip Flexors",
-                description: "Run in place, bringing your knees up as high as possible, aiming for hip height. Move your arms rhythmically.",
-                tip: "Focus on speed and height. Keep it explosive.",
-		image: "workout_images/high_knees.png"
-		
-            },
-            "Triceps Dips": {
-                target: "Triceps, Shoulders (Anterior Deltoid)",
-                description: "Use a stable bench or chair. Place hands shoulder-width apart, fingers forward. Lower your body until your elbows are at 90 degrees, then push back up. Keep your back close to the bench.",
-                tip: "Keep your shoulders down and away from your ears.",
-		image: "workout_images/tricep_dips.png"
+                    },
+                    "Bicycle Crunch": {
+                        target: "Core (Rectus Abdominis, Obliques)",
+                        description: "Lie on your back, hands behind your head. Bring your right elbow to your left knee while straightening your right leg. Alternate sides in a pedaling motion.",
+                        tip: "Focus on bringing the shoulder blade off the floor, not just the elbow to the knee.",
+                        image: "workout_images/bicycle_crunch"
+                    },
+                    "High Knees": {
+                        target: "Cardio, Quads, Hip Flexors",
+                        description: "Run in place, bringing your knees up as high as possible, aiming for hip height. Move your arms rhythmically.",
+                        tip: "Focus on speed and height. Keep it explosive.",
+                        image: "workout_images/high_knees.png"
+                        
+                    },
+                    "Triceps Dips": {
+                        target: "Triceps, Shoulders (Anterior Deltoid)",
+                        description: "Use a stable bench or chair. Place hands shoulder-width apart, fingers forward. Lower your body until your elbows are at 90 degrees, then push back up. Keep your back close to the bench.",
+                        tip: "Keep your shoulders down and away from your ears.",
+                        image: "workout_images/tricep_dips.png"
 
+                    },
+                    "Cross-Body Shoulder Stretch": {
+                        target: "Shoulders (Deltoids)",
+                        description: "Extend one arm straight across your chest and use your opposite arm to gently pull the extended arm closer to your body.",
+                        tip: "Hold the stretch without bouncing. Breathe deeply.",
+                        image: "workout_images/crossbody-shoulder-stretch.png"
+                    },
+                    "Overhead Triceps Stretch": {
+                        target: "Triceps, Lats",
+                        description: "Raise one arm overhead, bend the elbow, and drop your hand behind your head. Use the opposite hand to gently push the elbow down.",
+                        tip: "Keep your head up and chest open.",
+                        image: "workout_images/triceps_stretch.png"
+                    },
+                    "Cobra Pose": {
+                        target: "Abs (Stretch), Lower Back (Extension)",
+                        description: "Lie face down, hands under shoulders. Push up slightly, arching your upper back while keeping your hips on the ground.",
+                        tip: "A gentle extension for the core and spine.",
+                        image: "workout_images/cobra_pose.png"
+                    },
+                    "Jumping Jacks": {
+                        target: "Full Body Cardio Warm-up",
+                        description: "Jump while simultaneously raising your arms overhead and spreading your legs. Reverse the motion to return to the starting position.",
+                        tip: "Maintain a steady, rhythmic pace.",
+                        image: "workout_images/jumping_jack.png"
+                    },
+                    "Forward Lunges": {
+                        target: "Quads, Glutes, Hip Flexors (Dynamic)",
+                        description: "Step forward into a lunge, alternating legs. Use a controlled tempo.",
+                        tip: "Focus on range of motion and warming up the joints.",
+                        image: "workout_images/forward_lunges.png"
+                    },
+                    "Torso Twists": {
+                        target: "Core Rotation, Obliques (Warm-up)",
+                        description: "Stand with feet shoulder-width apart, arms bent. Rotate your torso from side to side, letting your arms swing naturally.",
+                        tip: "Keep your hips relatively stable; the movement is focused in the upper body.",
+                        image: "workout_images/torso_twists.png"
+                    },
+                    "Burpees": {
+                        target: "Full Body Cardio & Conditioning",
+                        description: "From standing, squat down, kick feet back into a plank, jump feet back in, and explode into a jump with hands overhead.",
+                        tip: "Maintain high energy. If fatigue hits, step back instead of jumping back (No push-up option).",
+                        image: "workout_images/burpee.png"
+                    },
+                    "Jump Lunges": {
+                        target: "Quads, Glutes, Explosive Power",
+                        description: "Start in a lunge. Jump up and switch the position of your feet in mid-air, landing softly in the opposite lunge position.",
+                        tip: "Highly demanding. Use a full range of motion but prioritize a soft, controlled landing.",
+                        image: "workout_images/jump_lunges.png"
+                    },
+                    "Commando Plank": {
+                        target: "Core (Anti-Extension), Shoulders",
+                        description: "Start in a high plank. Transition one forearm down to the floor, then the other, landing in a low plank. Reverse the movement to return to a high plank. Alternate the leading arm.",
+                        tip: "Keep your hips as still as possible throughout the transition.",
+                        image: "workout_images/commando_plank.png"
+                    },
+                    "Thrusters": {
+                        target: "Quads, Shoulders, Full Body Coordination",
+                        description: "Start with weights held at the shoulders. Drop into a full squat. Explode out of the squat, using the momentum to drive the weights directly overhead (Overhead Press). Bring the weights back to the shoulders and repeat.",
+                        tip: "It's one fluid movement. The legs do most of the work to generate power for the press.",
+                        image: "workout_images/thursters.png"
+                    },
+                    "Heel Touches": {
+                        target: "Obliques, Side Core",
+                        description: "Lie on your back, knees bent, arms at your sides. Crunch sideways, trying to touch your right heel with your right hand, then your left heel with your left hand. Keep your neck relaxed.",
+                        tip: "Focus on the side crunch, not just the reach of the arm.",
+                        image: "workout_images/heel_touches.png"
+                    },
+                    "Stationary Run": {
+                        target: "Cardio, Endurance",
+                        description: "Run in place at a medium pace. Unlike High Knees, the focus is on sustained movement rather than maximal height.",
+                        tip: "Maintain a steady effort to keep your heart rate elevated.",
+                        image: "workout_images/stationary_run.png"
+                    },
+                    "Standing Quadriceps Stretch": {
+                        target: "Quadriceps",
+                        description: "Stand tall, pull one foot towards your glutes with the same-side hand. Keep your knees aligned and your hips tucked forward slightly.",
+                        tip: "Use a wall for balance if necessary. Only pull until you feel a comfortable stretch.",
+                        image: "workout_images/standing_quad_stretch.png"
+                    },
+                    "Floor Hamstring Stretch": {
+                        target: "Hamstrings (Static)",
+                        description: "Sit on the floor. Loop a band or towel around one foot and gently pull it toward you, keeping the leg straight. Alternatively, reach for your toes.",
+                        tip: "Hold for 30 seconds or more. Do not bounce.",
+                        image: "workout_images/floor_hamstring_stretch.png"
+                    },
+                    "Supine Spinal Twist": {
+                        target: "Spine, Obliques, Shoulders (Relaxation)",
+                        description: "Lie on your back, extend arms out to the sides. Drop your knees to one side, keeping your shoulders flat on the floor, and turn your head the opposite way.",
+                        tip: "Excellent for spinal decompression after heavy lifting.",
+                        image: "workout_images/supine_spinal_twist.png"
+                    },
+                    "Savasana (Corpse Pose)": {
+                        target: "Mind, Nervous System (Recovery)",
+                        description: "Lie flat on your back, arms slightly away from the body, palms up. Close your eyes and completely relax every muscle. Focus on your breath.",
+                        tip: "Stay for 1-5 minutes. This is crucial for recovery and cooling down the nervous system.",
+                        image: "workout_images/Savasana.png"
+                    }
+                },
+                
+                // Workout Data
+                "programData": {
+                    day1: {
+                        title: "Day 1: Lower Body",
+                        focus: "Leg Strength & Glute Development",
+                        intro: "Start your week strong with a lower body focus. This session begins with dynamic activation, moves into heavy compound lifts (RDLs), challenges your stability with a lunge circuit, and finishes with a high-rep burnout. Pay attention to the tempo and rest periods.",
+                        blocks: [
+                            {
+                                title: "1. Warm Up",
+                                type: "warmup",
+                                exercises: [
+                                    { name: "Air Squat", duration: "30 s", type: "time" },
+                                    { name: "Good Morning", duration: "30 s", type: "time" },
+                                    { name: "Hamstring Scoops", duration: "30 s", type: "time", note: "Dynamic Hamstring Stretches" }
+                                ]
+                            },
+                            {
+                                title: "2. Strength Block: Romanian Deadlift",
+                                type: "strength",
+                                sets: [
+                                    { desc: "Set 1", exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 reps" }], rest: 25 },
+                                    { desc: "Set 2", exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 reps" }], rest: 25 },
+                                    { desc: "Set 3", exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 reps" }], rest: 25 }
+                                ]
+                            },
+                            {
+                                title: "3. Lunge & Compound Block",
+                                type: "circuit",
+                                note: "Focus on balance and core engagement.",
+                                sets: [
+                                    {
+                                        desc: "Round 1",
+                                        exercises: [
+                                            { name: "Walking Lunge - Alternating", reps: "16 reps" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Lateral Bear Crawl", duration: "30 sec" },
+                                            { name: "High Plank Leg Lift", duration: "30 sec" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Round 2",
+                                        exercises: [
+                                            { name: "Walking Lunge - Alternating", reps: "16 reps" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Lateral Bear Crawl", duration: "30 sec" },
+                                            { name: "High Plank Leg Lift", duration: "30 sec" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Round 3",
+                                        exercises: [
+                                            { name: "Walking Lunge - Alternating", reps: "16 reps" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Lateral Bear Crawl", duration: "30 sec" },
+                                            { name: "High Plank Leg Lift", duration: "30 sec" }
+                                        ],
+                                        rest: 0
+                                    }
+                                ]
+                            },
+                            {
+                                title: "4. Squat & Bridge Block",
+                                type: "circuit",
+                                sets: [
+                                    {
+                                        desc: "Set 1",
+                                        exercises: [
+                                            { name: "Squat", reps: "12 reps" },
+                                            { name: "Squat Pulse", reps: "12 reps", note: "Small Pulses" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Glute Bridge", reps: "12 reps" },
+                                            { name: "Glute Bridge Walk out", duration: "30 sec" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Set 2",
+                                        exercises: [
+                                            { name: "Squat", reps: "12 reps" },
+                                            { name: "Squat Pulse", reps: "12 reps", note: "Small Pulses" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Glute Bridge", reps: "12 reps" },
+                                            { name: "Glute Bridge Walk out", duration: "30 sec" }
+                                        ],
+                                        rest: 0
+                                    }
+                                ]
+                            },
+                            {
+                                title: "5. Finisher + Cool Down",
+                                type: "mixed",
+                                content: [
+                                    {
+                                        subtitle: "Burnout Finisher",
+                                        items: [
+                                            "30 sec Ice Skater",
+                                            "30 sec Calf Raise",
+                                            "Rest 15 sec",
+                                            "30 sec Ice Skater",
+                                            "30 sec Calf Raise"
+                                        ]
+                                    },
+                                    {
+                                        subtitle: "Cool Down (Hold 30-45s)",
+                                        items: [
+                                            "Seated Forward fold",
+                                            "Supine Knee to chest",
+                                            "Child's pose"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                    ,
+                    day2: {
+                        title: "Day 2: Upper Body & Core",
+                        focus: "Push/Pull Strength & Core Stability",
+                        intro: "Day 2 balances the upper body with push and pull movements. You will perform push-ups for chest/shoulders, followed by inverted rows and band work for the back. The session finishes with a dedicated core block focusing on rotation and anti-rotation stability.",
+                        blocks: [
+                            {
+                                title: "1. Warm Up",
+                                type: "warmup",
+                                exercises: [
+                                    { name: "Arm Circles", duration: "30 s", note: "Forward & Backward" },
+                                    { name: "Thread the Needle", duration: "30 s", note: "Supine Thoracic Rotation" },
+                                    { name: "Cat-Cow", duration: "30 s" }
+                                ]
+                            },
+                            {
+                                title: "2. Push Block",
+                                type: "strength",
+                                sets: [
+                                    { desc: "Set 1", exercises: [{ name: "Push-ups", reps: "10 reps" }], rest: 30 },
+                                    { desc: "Set 2", exercises: [{ name: "Push-ups", reps: "10 reps" }], rest: 30 },
+                                    { desc: "Set 3", exercises: [{ name: "Push-ups", reps: "10 reps" }], rest: 30 }
+                                ]
+                            },
+                            {
+                                title: "3. Pull & Rear Shoulder Block",
+                                type: "circuit",
+                                sets: [
+                                    {
+                                        desc: "Set 1",
+                                        exercises: [
+                                            { name: "Inverted Row", reps: "12-15 reps", note: "Using a sturdy table" },
+                                            { name: "Rest", rest: 20 },
+                                            { name: "Band Pull-Apart", reps: "15-20 reps", note: "Band or Towel" }
+                                        ],
+                                        rest: 20
+                                    },
+                                    {
+                                        desc: "Set 2",
+                                        exercises: [
+                                            { name: "Inverted Row", reps: "12-15 reps", note: "Using a sturdy table" },
+                                            { name: "Rest", rest: 20 },
+                                            { name: "Band Pull-Apart", reps: "15-20 reps", note: "Band or Towel" }
+                                        ],
+                                        rest: 20
+                                    }
+                                ]
+                            },
+                            {
+                                title: "4. Core Block: Stability & Rotation",
+                                type: "circuit",
+                                sets: [
+                                    {
+                                        desc: "Set 1 (Stability)",
+                                        exercises: [
+                                            { name: "Plank", duration: "60 sec" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Side Plank - Right", duration: "30 sec" },
+                                            { name: "Side Plank - Left", duration: "30 sec" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Set 2 (Rotation)",
+                                        exercises: [
+                                            { name: "Russian Twist", reps: "20 reps" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Bicycle Crunch", reps: "20 reps" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Russian Twist", reps: "20 reps" }
+                                        ],
+                                        rest: 0
+                                    }
+                                ]
+                            },
+                            {
+                                title: "5. Finisher + Cool Down",
+                                type: "mixed",
+                                content: [
+                                    {
+                                        subtitle: "Finisher (2 Rounds)",
+                                        items: [
+                                            "30 sec High Knees",
+                                            "15 rep Triceps Dips",
+                                            "Rest 20 sec"
+                                        ]
+                                    },
+                                    {
+                                        subtitle: "Cool Down (Hold 30-45s)",
+                                        items: [
+                                            "Cross-Body Shoulder Stretch",
+                                            "Overhead Triceps Stretch",
+                                            "Cobra Pose"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    day3: {
+                        title: "Day 3: Full Body Cardio",
+                        focus: "Metabolic Conditioning & Endurance",
+                        intro: "The final day is high intensity. It features a metabolic circuit repeated 3 times with no rest between exercises. This is followed by a 'Thruster Block' combining legs and shoulders, and a final core burnout. Prepare to sweat.",
+                        blocks: [
+                            {
+                                title: "1. Warm Up",
+                                type: "warmup",
+                                exercises: [
+                                    { name: "Jumping Jacks", duration: "30 s" },
+                                    { name: "Forward Lunges", duration: "30 s", note: "Alternating" },
+                                    { name: "Torso Twists", duration: "30 s" }
+                                ]
+                            },
+                            {
+                                title: "2. Metabolic Cardio Circuit",
+                                type: "circuit",
+                                note: "Perform consecutively without rest. Rest 60s at end of round. Repeat 3 times.",
+                                sets: [
+                                    {
+                                        desc: "Round 1",
+                                        exercises: [
+                                            { name: "Burpees", reps: "15 reps", note: "No push-up for beginners" },
+                                            { name: "High Knees", duration: "30 sec", note: "Fast Pace" },
+                                            { name: "Jump Lunges", reps: "20 reps", note: "10 per side" },
+                                            { name: "Commando Plank", duration: "45 sec" }
+                                        ],
+                                        rest: 60
+                                    },
+                                    {
+                                        desc: "Round 2",
+                                        exercises: [
+                                            { name: "Burpees", reps: "15 reps" },
+                                            { name: "High Knees", duration: "30 sec" },
+                                            { name: "Jump Lunges", reps: "20 reps" },
+                                            { name: "Commando Plank", duration: "45 sec" }
+                                        ],
+                                        rest: 60
+                                    },
+                                    {
+                                        desc: "Round 3",
+                                        exercises: [
+                                            { name: "Burpees", reps: "15 reps" },
+                                            { name: "High Knees", duration: "30 sec" },
+                                            { name: "Jump Lunges", reps: "20 reps" },
+                                            { name: "Commando Plank", duration: "45 sec" }
+                                        ],
+                                        rest: 60
+                                    }
+                                ]
+                            },
+                            {
+                                title: "3. Legs & Shoulders (Thruster Block)",
+                                type: "strength",
+                                sets: [
+                                    {
+                                        desc: "Set 1",
+                                        exercises: [
+                                            { name: "Thrusters", reps: "12 reps", note: "Squat + Overhead Press (Light)" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Calf Raise", reps: "20 reps" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Set 2",
+                                        exercises: [
+                                            { name: "Thrusters", reps: "12 reps", note: "Squat + Overhead Press (Light)" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Calf Raise", reps: "20 reps" }
+                                        ],
+                                        rest: 25
+                                    }
+                                ]
+                            },
+                            {
+                                title: "4. Core Finisher",
+                                type: "circuit",
+                                sets: [
+                                    {
+                                        desc: "Set 1",
+                                        exercises: [
+                                            { name: "Heel Touches", reps: "20 reps" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Stationary Run", duration: "60 sec" }
+                                        ],
+                                        rest: 15
+                                    },
+                                    {
+                                        desc: "Set 2",
+                                        exercises: [
+                                            { name: "Heel Touches", reps: "20 reps" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Stationary Run", duration: "60 sec" }
+                                        ],
+                                        rest: 0
+                                    }
+                                ]
+                            },
+                            {
+                                title: "5. Cool Down",
+                                type: "mixed",
+                                content: [
+                                    {
+                                        subtitle: "Hold 30-45 sec per position",
+                                        items: [
+                                            "Standing Quadriceps Stretch",
+                                            "Floor Hamstring Stretch",
+                                            "Supine Spinal Twist",
+                                            "Savasana (Corpse Pose)"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
             },
-            "Cross-Body Shoulder Stretch": {
-                target: "Shoulders (Deltoids)",
-                description: "Extend one arm straight across your chest and use your opposite arm to gently pull the extended arm closer to your body.",
-                tip: "Hold the stretch without bouncing. Breathe deeply.",
-		image: "workout_images/crossbody-shoulder-stretch.png"
-            },
-            "Overhead Triceps Stretch": {
-                target: "Triceps, Lats",
-                description: "Raise one arm overhead, bend the elbow, and drop your hand behind your head. Use the opposite hand to gently push the elbow down.",
-                tip: "Keep your head up and chest open.",
-		image: "workout_images/triceps_stretch.png"
-            },
-            "Cobra Pose": {
-                target: "Abs (Stretch), Lower Back (Extension)",
-                description: "Lie face down, hands under shoulders. Push up slightly, arching your upper back while keeping your hips on the ground.",
-                tip: "A gentle extension for the core and spine.",
-		image: "workout_images/cobra_pose.png"
-            },
-            "Jumping Jacks": {
-                target: "Full Body Cardio Warm-up",
-                description: "Jump while simultaneously raising your arms overhead and spreading your legs. Reverse the motion to return to the starting position.",
-                tip: "Maintain a steady, rhythmic pace.",
-		image: "workout_images/jumping_jack.png"
-            },
-            "Forward Lunges": {
-                target: "Quads, Glutes, Hip Flexors (Dynamic)",
-                description: "Step forward into a lunge, alternating legs. Use a controlled tempo.",
-                tip: "Focus on range of motion and warming up the joints.",
-		image: "workout_images/forward_lunges.png"
-            },
-            "Torso Twists": {
-                target: "Core Rotation, Obliques (Warm-up)",
-                description: "Stand with feet shoulder-width apart, arms bent. Rotate your torso from side to side, letting your arms swing naturally.",
-                tip: "Keep your hips relatively stable; the movement is focused in the upper body.",
-		image: "workout_images/torso_twists.png"
-            },
-            "Burpees": {
-                target: "Full Body Cardio & Conditioning",
-                description: "From standing, squat down, kick feet back into a plank, jump feet back in, and explode into a jump with hands overhead.",
-                tip: "Maintain high energy. If fatigue hits, step back instead of jumping back (No push-up option).",
-		image: "workout_images/burpee.png"
-            },
-            "Jump Lunges": {
-                target: "Quads, Glutes, Explosive Power",
-                description: "Start in a lunge. Jump up and switch the position of your feet in mid-air, landing softly in the opposite lunge position.",
-                tip: "Highly demanding. Use a full range of motion but prioritize a soft, controlled landing.",
-		image: "workout_images/jump_lunges.png"
-            },
-            "Commando Plank": {
-                target: "Core (Anti-Extension), Shoulders",
-                description: "Start in a high plank. Transition one forearm down to the floor, then the other, landing in a low plank. Reverse the movement to return to a high plank. Alternate the leading arm.",
-                tip: "Keep your hips as still as possible throughout the transition.",
-		image: "workout_images/commando_plank.png"
-            },
-            "Thrusters": {
-                target: "Quads, Shoulders, Full Body Coordination",
-                description: "Start with weights held at the shoulders. Drop into a full squat. Explode out of the squat, using the momentum to drive the weights directly overhead (Overhead Press). Bring the weights back to the shoulders and repeat.",
-                tip: "It's one fluid movement. The legs do most of the work to generate power for the press.",
-		image: "workout_images/thursters.png"
-            },
-            "Heel Touches": {
-                target: "Obliques, Side Core",
-                description: "Lie on your back, knees bent, arms at your sides. Crunch sideways, trying to touch your right heel with your right hand, then your left heel with your left hand. Keep your neck relaxed.",
-                tip: "Focus on the side crunch, not just the reach of the arm.",
-		image: "workout_images/heel_touches.png"
-            },
-            "Stationary Run": {
-                target: "Cardio, Endurance",
-                description: "Run in place at a medium pace. Unlike High Knees, the focus is on sustained movement rather than maximal height.",
-                tip: "Maintain a steady effort to keep your heart rate elevated.",
-		image: "workout_images/stationary_run.png"
-            },
-            "Standing Quadriceps Stretch": {
-                target: "Quadriceps",
-                description: "Stand tall, pull one foot towards your glutes with the same-side hand. Keep your knees aligned and your hips tucked forward slightly.",
-                tip: "Use a wall for balance if necessary. Only pull until you feel a comfortable stretch.",
-		image: "workout_images/standing_quad_stretch.png"
-            },
-            "Floor Hamstring Stretch": {
-                target: "Hamstrings (Static)",
-                description: "Sit on the floor. Loop a band or towel around one foot and gently pull it toward you, keeping the leg straight. Alternatively, reach for your toes.",
-                tip: "Hold for 30 seconds or more. Do not bounce.",
-		image: "workout_images/floor_hamstring_stretch.png"
-            },
-            "Supine Spinal Twist": {
-                target: "Spine, Obliques, Shoulders (Relaxation)",
-                description: "Lie on your back, extend arms out to the sides. Drop your knees to one side, keeping your shoulders flat on the floor, and turn your head the opposite way.",
-                tip: "Excellent for spinal decompression after heavy lifting.",
-		image: "workout_images/supine_spinal_twist.png"
-            },
-            "Savasana (Corpse Pose)": {
-                target: "Mind, Nervous System (Recovery)",
-                description: "Lie flat on your back, arms slightly away from the body, palms up. Close your eyes and completely relax every muscle. Focus on your breath.",
-                tip: "Stay for 1-5 minutes. This is crucial for recovery and cooling down the nervous system.",
-		image: "workout_images/Savasana.png"
+
+            // FRENCH TEXT STRINGS AND DATA
+            "FR": {
+                // Static Text
+                "nav_dashboard": "Tableau de bord",
+                "nav_day1": "Jour 1",
+                "nav_day2": "Jour 2",
+                "nav_day3": "Jour 3",
+                "timer_rest_recover": "Repos & Récupération",
+                "timer_skip_done": "Sauter / Terminé",
+                "modal_image_note": "L'image est un espace réservé. Dans une application en direct, ce serait un GIF/Vidéo.",
+                "home_title": "Votre Programme d'Entraînement de 3 Jours",
+                "home_intro": "Ce programme interactif est conçu pour un physique équilibré, axé sur la force fonctionnelle, l'hypertrophie et le conditionnement métabolique. Effectuez ces séances avec au moins un jour de repos entre (ex : Lundi, Mercredi, Vendredi). Sélectionnez un jour ci-dessus pour commencer votre entraînement guidé. Cliquez sur l'icône 'ⓘ' à côté de tout exercice pour un guide visuel.",
+                "home_day1_title": "Jour 1 : Bas du Corps",
+                "home_day1_desc": "Force & Hypertrophie axée sur les fessiers, les quads et les ischio-jambiers.",
+                "home_day2_title": "Jour 2 : Haut & Abdominaux",
+                "home_day2_desc": "Mécaniques Pousser/Tirer combinées à la stabilité et la rotation du tronc.",
+                "home_day3_title": "Jour 3 : Corps Entier",
+                "home_day3_desc": "Conditionnement métabolique, mouvements explosifs et endurance.",
+                "chart1_title": "Distribution de la Concentration d'Entraînement",
+                "chart1_subtitle": "Visualisation de l'équilibre entre les groupes musculaires et les systèmes énergétiques.",
+                "chart2_title": "Volume Estimé (Séries)",
+                "chart2_subtitle": "Total des séries de travail par jour (hors échauffements).",
+                "workout_progress": "Progression",
+                "workout_complete_btn": "Terminer l'Entraînement",
+                "footer_text": "Généré sur la base du Rapport Source fourni.",
+                "modal_details_missing_title": "Détails Indisponibles",
+                "modal_details_missing_body": "Aucune description ou image n'est disponible pour l'exercice",
+                "modal_target_title": "Cible Musculaire",
+                "modal_exec_title": "Description de l'Exécution",
+                "modal_tip_title": "Conseil de Performance",
+                "alert_complete": "Excellent travail ! Entraînement terminé. Assurez-vous de vous hydrater et de vous reposer.",
+
+                // Exercise Data
+                "exerciseDetails": {
+                    "Air Squat": {
+                        target: "Quadriceps, Fessiers, Hanches",
+                        description: "Squat sans poids. Concentrez-vous sur le fait de vous asseoir comme sur une chaise, en gardant la poitrine haute et le dos droit. Les hanches doivent descendre sous les genoux.",
+                        tip: "Engagez votre tronc pour maintenir une colonne vertébrale neutre. Poussez à travers vos talons à la montée.",
+                        image: "workout_images/air_squat.png"
+                    },
+                    "Good Morning": {
+                        target: "Ischio-jambiers, Fessiers, Bas du Dos",
+                        description: "Tenez-vous debout, mains derrière la tête (ou tenant une barre/bande légère). Pliez au niveau des hanches, abaissant votre torse jusqu'à ce qu'il soit parallèle au sol, en maintenant une légère flexion des genoux. Gardez votre dos plat.",
+                        tip: "Ceci est un étirement des ischio-jambiers et un échauffement dynamique, pas un soulevé maximal. Concentrez-vous sur l'étirement en bas.",
+                        image: "workout_images/good_morning.png"
+                    },
+                    "Hamstring Scoops": {
+                        target: "Ischio-jambiers (Échauffement Dynamique)",
+                        description: "Marchez vers l'avant, en alternant les jambes. À chaque pas, gardez la jambe avant droite, tendez vos mains vers vos orteils, ressentant un étirement dans l'ischio-jambier. Gardez votre dos droit.",
+                        tip: "Il s'agit de mouvement et de circulation sanguine, pas de profondeur. Gardez le mouvement fluide.",
+                        image: "workout_images/hamstring_scoops.png"
+                    },
+                    "Romanian Deadlift (RDL)": {
+                        target: "Ischio-jambiers, Fessiers, Bas du Dos",
+                        description: "Commencez debout, gardez les jambes relativement droites (légère flexion). Abaissez le poids en poussant vos hanches vers l'arrière, en gardant la barre près de vos jambes. Arrêtez-vous juste sous les genoux ou lorsque votre dos commence à s'arrondir. Contractez les fessiers pour vous relever.",
+                        tip: "Le mouvement vient de la charnière de la hanche. Imaginez montrer à la personne derrière vous le logo sur votre chemise.",
+                        image: "workout_images/rdl.png"
+                    },
+                    "Walking Lunge - Alternating": {
+                        target: "Quadriceps, Fessiers, Fléchisseurs de la Hanche",
+                        description: "Faites un grand pas en avant et abaissez vos hanches jusqu'à ce que les deux genoux soient pliés à un angle de 90 degrés. Assurez-vous que le genou avant ne dépasse pas les orteils. Poussez sur le pied avant pour ramener la jambe arrière vers l'avant, continuant la marche.",
+                        tip: "Gardez votre torse vertical. Utilisez une descente contrôlée et une poussée explosive.",
+                        image: "workout_images/walking_lunge.png"
+                    },
+                    "Lateral Bear Crawl": {
+                        target: "Stabilité du Tronc, Épaules, Quads",
+                        description: "Commencez à quatre pattes (position de l'ours). Déplacez-vous latéralement, bougeant simultanément la main et le pied du même côté, gardant les hanches basses et le dos plat. Concentrez-vous sur l'anti-rotation.",
+                        tip: "Imaginez équilibrer un verre d'eau sur votre bas du dos. Les petits pas sont meilleurs que les grands.", 
+                        image: "workout_images/side_bear_crawl.png"
+                    },
+                    "High Plank Leg Lift": {
+                        target: "Anti-Rotation du Tronc, Fessiers, Hanches",
+                        description: "En position de planche haute (haut d'une pompe), soulevez légèrement une jambe du sol, en contractant le fessier. Abaissez lentement et alternez. Gardez les hanches de niveau et minimisez le balancement.",
+                        tip: "Le but est d'empêcher vos hanches de se tordre. Allez lentement et concentrez-vous sur la contraction du fessier.",
+                        image: "workout_images/high_plank_leg_lift.png"
+                    },
+                    "Squat": {
+                        target: "Quadriceps, Fessiers, Adducteurs",
+                        description: "Descendez en squat, dépassant la parallèle si confortable, en gardant votre poitrine haute. Poussez vers le haut à travers tout le pied.",
+                        tip: "Maintenez la tension au bas du mouvement. Inspirez en descendant, expirez en montant.",
+                        image: "workout_images/squat.png"
+                    },
+                    "Squat Pulse": {
+                        target: "Endurance des Quadriceps",
+                        description: "Restez dans la moitié inférieure de la position de squat (de la parallèle à environ mi-chemin vers le haut). Effectuez de petits mouvements de rebondissement rapides (pulsations).",
+                        tip: "Ceci est une série d'épuisement. Sentez la brûlure dans vos quads et maintenez la forme malgré la fatigue.",
+                        image: "workout_images/squat_pulse.png"
+                    },
+                    "Glute Bridge": {
+                        target: "Fessiers, Ischio-jambiers",
+                        description: "Allongez-vous sur le dos, genoux pliés et pieds à plat sur le sol. Poussez vos hanches vers le haut en contractant vos fessiers jusqu'à ce que votre corps forme une ligne droite des épaules aux genoux. Abaissez lentement.",
+                        tip: "Assurez-vous que votre bas du dos ne s'arque pas excessivement en haut. Concentrez la contraction uniquement dans les fessiers.",
+                        image: "workout_images/glute_bridge.png"
+                    },
+                    "Glute Bridge Walk out": {
+                        target: "Ischio-jambiers (Isolation), Fessiers",
+                        description: "Commencez en position de Glute Bridge. Éloignez lentement vos pieds de votre corps de quelques pas, puis ramenez-les. Gardez vos hanches élevées tout le temps.",
+                        tip: "Ceci augmente considérablement la charge des ischio-jambiers. Déplacez-vous lentement et délibérément pour éviter les crampes.",
+                        image: "workout_images/glute_bridge_walk_out.png"
+                    },
+                    "Ice Skater": {
+                        target: "Cardio, Force Latérale, Fessiers",
+                        description: "Sautez latéralement d'un pied à l'autre, balayant le pied opposé derrière vous. Utilisez vos bras pour l'équilibre et essayez de couvrir autant de terrain que possible.",
+                        tip: "Rendez-le explosif et visez des atterrissages doux pour protéger vos articulations.",
+                        image: "workout_images/ice_skater.png"
+                    },
+                    "Calf Raise": {
+                        target: "Mollets (Gastrocnémien, Soléaire)",
+                        description: "Tenez-vous debout et poussez sur la pointe de vos pieds, contractant complètement vos mollets au sommet. Abaissez lentement, contrôlant la phase excentrique.",
+                        tip: "Accrochez-vous à un mur pour l'équilibre si nécessaire. Utilisez une amplitude de mouvement complète.",
+                        image: "workout_images/calf_raise.png"
+                    },
+                    "Seated Forward fold": {
+                        target: "Ischio-jambiers, Bas du Dos (Étirement)",
+                        description: "Asseyez-vous avec les jambes tendues. Atteignez vos orteils ou vos tibias, en vous pliant au niveau des hanches. Détendez votre cou et vos épaules.",
+                        tip: "Concentrez-vous sur l'approfondissement de l'étirement à chaque expiration. Ce n'est pas grave si vous ne pouvez pas toucher vos orteils.",
+                        image: "seated_forward_fold.png"
+                    },
+                    "Supine Knee to chest": {
+                        target: "Bas du Dos, Fessiers (Étirement)",
+                        description: "Allongez-vous sur le dos et tirez un ou les deux genoux vers votre poitrine. Maintenez pour sentir un étirement doux dans le bas du dos et les fessiers.",
+                        tip: "Gardez vos épaules détendues et à plat sur le sol.",
+                        image: "workout_images/knee_to_chest.png"
+                    },
+                    "Child's pose": {
+                        target: "Haut du Dos, Épaules, Hanches (Détente)",
+                        description: "Agenouillez-vous sur le sol, assis sur vos talons. Pliez vers l'avant, reposant votre front sur le sol et étendant vos bras vers l'avant.",
+                        tip: "Une posture réparatrice. Concentrez-vous sur des respirations profondes et apaisantes.",
+                        image: "workout_images/child_pose.png"
+                    },
+                    "Arm Circles": {
+                        target: "Épaules, Haut du Dos (Échauffement)",
+                        description: "Tenez-vous droit et effectuez de petits cercles contrôlés avec vos bras. Commencez petit et augmentez progressivement la taille. Changez de direction (avant/arrière) à mi-chemin du temps imparti.",
+                        tip: "Gardez le reste de votre corps stable.",
+                        image: "workout_images/arm_circle.png"
+                    },
+                    "Thread the Needle": {
+                        target: "Colonne Thoracique (Rotation), Épaules",
+                        description: "Commencez à quatre pattes. Enfilez un bras sous l'autre, abaissant votre épaule et votre tête vers le sol, faisant pivoter votre torse.",
+                        tip: "Excellent pour améliorer la mobilité dans le haut du dos.",
+                        image: "workout_images/thread_the_needle.png"
+                    },
+                    "Cat-Cow": {
+                        target: "Mobilité de la Colonne Vertébrale, Échauffement du Tronc",
+                        description: "Commencez à quatre pattes. Inspirez, laissant tomber votre ventre et arquant votre dos (Vache). Expirez, arrondissant votre dos et rentrant votre menton (Chat). Déplacez-vous lentement entre les deux.",
+                        tip: "Synchronisez le mouvement avec votre respiration.",
+                        image: "workout_images/cat_cow.png"
+                    },
+                    "Push-ups": {
+                        target: "Poitrine (Pecs), Épaules (Deltoïde Antérieur), Triceps",
+                        description: "Commencez en position de planche. Abaissez votre poitrine vers le sol en pliant vos coudes (les gardant près de votre corps pour les triceps, ou plus larges pour la poitrine). Repoussez vers le haut en étendant complètement les bras.",
+                        tip: "Maintenez une ligne droite de la tête aux talons. Si nécessaire, effectuez sur vos genoux.",
+                        image: "workout_images/PushUps.png"
+                    },
+                    "Inverted Row": {
+                        target: "Dos (Grands Dorsaux, Rhomboïdes), Biceps, Tronc",
+                        description: "Allongez-vous sous une table ou un bureau solide. Saisissez le bord avec les mains à largeur d'épaules. Tirez votre poitrine jusqu'au bord de la table, en gardant votre corps en ligne droite, de la tête aux talons. Redescendez lentement.",
+                        tip: "Gardez votre tronc serré et ne laissez pas vos hanches s'affaisser. Assurez-vous que la table est suffisamment lourde pour ne pas basculer.",
+                        image: "inverted-row.jpg"
+                    },
+                    "Band Pull-Apart": {
+                        target: "Deltoïdes Postérieurs, Haut du Dos, Coiffe des Rotateurs",
+                        description: "Tenez une bande de résistance ou une serviette avec les mains à largeur d'épaules, bras tendus devant vous. Écartez vos mains horizontalement, contractant vos omoplates jusqu'à ce que la bande touche votre poitrine. Contrôlez le retour.",
+                        tip: "Gardez vos coudes droits mais souples. Ne haussez pas les épaules vers vos oreilles.",
+                        image: "workout_images/band-pull-apart.png"
+                    },
+                    "Plank": {
+                        target: "Tronc (Anti-Extension)",
+                        description: "Maintenez une position de pompe ou d'avant-bras, gardant une ligne droite de la tête aux talons. Contractez fermement votre tronc et vos fessiers.",
+                        tip: "Ne laissez pas vos hanches s'affaisser ou se lever. Regardez droit vers le bas."
+                    },
+                    "Side Plank - Right": {
+                        target: "Tronc (Obliques, Anti-Flexion Latérale)",
+                        description: "Commencez sur le côté, soutenu par votre avant-bras ou main droite. Soulevez vos hanches jusqu'à ce que votre corps forme une ligne droite. Maintenez.",
+                        tip: "Gardez vos pieds empilés ou décalés. Concentrez-vous sur la poussée de la hanche inférieure vers le haut."
+                    },
+                    "Side Plank - Left": {
+                        target: "Tronc (Obliques, Anti-Flexion Latérale)",
+                        description: "Commencez sur le côté, soutenu par votre avant-bras ou main gauche. Soulevez vos hanches jusqu'à ce que votre corps forme une ligne droite. Maintenez.",
+                        tip: "Ceci entraîne la stabilité du tronc et l'anti-rotation."
+                    },
+                    "Russian Twist": {
+                        target: "Tronc (Obliques, Grand Droit)",
+                        description: "Asseyez-vous sur le sol, penchez-vous légèrement en arrière (maintenant un dos droit), et soulevez vos pieds (ou gardez-les au sol). Faites pivoter votre torse d'un côté à l'autre, touchant le sol avec vos mains.",
+                        tip: "Contrôlez le mouvement; évitez de jeter vos bras. La rotation doit venir du torse, pas seulement des bras.",
+                        image: "workout_images/russian_twist.png"
+
+                    },
+                    "Bicycle Crunch": {
+                        target: "Tronc (Grand Droit, Obliques)",
+                        description: "Allongez-vous sur le dos, mains derrière la tête. Amenez votre coude droit à votre genou gauche tout en tendant votre jambe droite. Alternez les côtés dans un mouvement de pédalage.",
+                        tip: "Concentrez-vous sur le décollement de l'omoplate du sol, pas seulement du coude au genou.",
+                        image: "workout_images/bicycle_crunch"
+                    },
+                    "High Knees": {
+                        target: "Cardio, Quads, Fléchisseurs de la Hanche",
+                        description: "Courez sur place, amenant vos genoux aussi haut que possible, visant la hauteur des hanches. Bougez vos bras de manière rythmée.",
+                        tip: "Concentrez-vous sur la vitesse et la hauteur. Gardez le mouvement explosif.",
+                        image: "workout_images/high_knees.png"
+                        
+                    },
+                    "Triceps Dips": {
+                        target: "Triceps, Épaules (Deltoïde Antérieur)",
+                        description: "Utilisez un banc ou une chaise stable. Placez les mains à largeur d'épaules, doigts vers l'avant. Abaissez votre corps jusqu'à ce que vos coudes soient à 90 degrés, puis repoussez vers le haut. Gardez votre dos près du banc.",
+                        tip: "Gardez vos épaules abaissées et éloignées de vos oreilles.",
+                        image: "workout_images/tricep_dips.png"
+
+                    },
+                    "Cross-Body Shoulder Stretch": {
+                        target: "Épaules (Deltoïdes)",
+                        description: "Étendez un bras droit sur votre poitrine et utilisez votre bras opposé pour tirer doucement le bras étendu plus près de votre corps.",
+                        tip: "Maintenez l'étirement sans rebondir. Respirez profondément.",
+                        image: "workout_images/crossbody-shoulder-stretch.png"
+                    },
+                    "Overhead Triceps Stretch": {
+                        target: "Triceps, Grands Dorsaux",
+                        description: "Levez un bras au-dessus de la tête, pliez le coude et laissez tomber votre main derrière votre tête. Utilisez la main opposée pour pousser doucement le coude vers le bas.",
+                        tip: "Gardez votre tête haute et votre poitrine ouverte.",
+                        image: "workout_images/triceps_stretch.png"
+                    },
+                    "Cobra Pose": {
+                        target: "Abdominaux (Étirement), Bas du Dos (Extension)",
+                        description: "Allongez-vous face vers le bas, mains sous les épaules. Poussez légèrement vers le haut, arquant votre haut du dos tout en gardant vos hanches au sol.",
+                        tip: "Une extension douce pour le tronc et la colonne vertébrale.",
+                        image: "workout_images/cobra_pose.png"
+                    },
+                    "Jumping Jacks": {
+                        target: "Cardio Complet du Corps (Échauffement)",
+                        description: "Sautez tout en levant simultanément vos bras au-dessus de la tête et en écartant vos jambes. Inversez le mouvement pour revenir à la position de départ.",
+                        tip: "Maintenez un rythme régulier et rythmé.",
+                        image: "workout_images/jumping_jack.png"
+                    },
+                    "Forward Lunges": {
+                        target: "Quads, Fessiers, Fléchisseurs de la Hanche (Dynamique)",
+                        description: "Faites un pas en avant en fente, alternant les jambes. Utilisez un tempo contrôlé.",
+                        tip: "Concentrez-vous sur l'amplitude de mouvement et l'échauffement des articulations.",
+                        image: "workout_images/forward_lunges.png"
+                    },
+                    "Torso Twists": {
+                        target: "Rotation du Tronc, Obliques (Échauffement)",
+                        description: "Tenez-vous debout, pieds à largeur d'épaules, bras pliés. Faites pivoter votre torse d'un côté à l'autre, laissant vos bras se balancer naturellement.",
+                        tip: "Gardez vos hanches relativement stables; le mouvement est concentré dans le haut du corps.",
+                        image: "workout_images/torso_twists.png"
+                    },
+                    "Burpees": {
+                        target: "Cardio Complet du Corps & Conditionnement",
+                        description: "De la position debout, accroupissez-vous, lancez les pieds en arrière en planche, sautez les pieds en avant, et explosez en un saut, mains au-dessus de la tête.",
+                        tip: "Maintenez une énergie élevée. En cas de fatigue, reculez plutôt que de sauter en arrière (Option sans pompe).",
+                        image: "workout_images/burpee.png"
+                    },
+                    "Jump Lunges": {
+                        target: "Quads, Fessiers, Puissance Explosive",
+                        description: "Commencez en fente. Sautez et changez la position de vos pieds en l'air, atterrissant doucement dans la position de fente opposée.",
+                        tip: "Très exigeant. Utilisez une amplitude de mouvement complète mais privilégiez un atterrissage doux et contrôlé.",
+                        image: "workout_images/jump_lunges.png"
+                    },
+                    "Commando Plank": {
+                        target: "Tronc (Anti-Extension), Épaules",
+                        description: "Commencez en planche haute. Abaissez un avant-bras au sol, puis l'autre, atterrissant en planche basse. Inversez le mouvement pour revenir à une planche haute. Alternez le bras de tête.",
+                        tip: "Gardez vos hanches aussi immobiles que possible tout au long de la transition.",
+                        image: "workout_images/commando_plank.png"
+                    },
+                    "Thrusters": {
+                        target: "Quads, Épaules, Coordination Complète du Corps",
+                        description: "Commencez avec des poids tenus aux épaules. Descendez en squat complet. Explosez hors du squat, utilisant l'élan pour pousser les poids directement au-dessus de la tête (Développé Épaules). Ramenez les poids aux épaules et répétez.",
+                        tip: "C'est un mouvement fluide. Les jambes font la majeure partie du travail pour générer de la puissance pour la presse.",
+                        image: "workout_images/thursters.png"
+                    },
+                    "Heel Touches": {
+                        target: "Obliques, Côté du Tronc",
+                        description: "Allongez-vous sur le dos, genoux pliés, bras le long du corps. Faites un crunch latéral, essayant de toucher votre talon droit avec votre main droite, puis votre talon gauche avec votre main gauche. Gardez votre cou détendu.",
+                        tip: "Concentrez-vous sur le crunch latéral, pas seulement sur l'allongement du bras.",
+                        image: "workout_images/heel_touches.png"
+                    },
+                    "Stationary Run": {
+                        target: "Cardio, Endurance",
+                        description: "Courez sur place à un rythme moyen. Contrairement aux Montées de Genoux, l'accent est mis sur le mouvement soutenu plutôt que sur la hauteur maximale.",
+                        tip: "Maintenez un effort constant pour garder votre rythme cardiaque élevé.",
+                        image: "workout_images/stationary_run.png"
+                    },
+                    "Standing Quadriceps Stretch": {
+                        target: "Quadriceps",
+                        description: "Tenez-vous droit, tirez un pied vers vos fessiers avec la main du même côté. Gardez vos genoux alignés et vos hanches légèrement rentrées vers l'avant.",
+                        tip: "Utilisez un mur pour l'équilibre si nécessaire. Tirez seulement jusqu'à ce que vous sentiez un étirement confortable.",
+                        image: "workout_images/standing_quad_stretch.png"
+                    },
+                    "Floor Hamstring Stretch": {
+                        target: "Ischio-jambiers (Statique)",
+                        description: "Asseyez-vous sur le sol. Enroulez une bande ou une serviette autour d'un pied et tirez-la doucement vers vous, gardant la jambe droite. Alternativement, atteignez vos orteils.",
+                        tip: "Maintenez pendant 30 secondes ou plus. Ne rebondissez pas.",
+                        image: "workout_images/floor_hamstring_stretch.png"
+                    },
+                    "Supine Spinal Twist": {
+                        target: "Colonne Vertébrale, Obliques, Épaules (Détente)",
+                        description: "Allongez-vous sur le dos, bras étendus sur les côtés. Laissez tomber vos genoux d'un côté, gardant vos épaules à plat sur le sol, et tournez votre tête dans la direction opposée.",
+                        tip: "Excellent pour la décompression vertébrale après un levage lourd.",
+                        image: "workout_images/supine_spinal_twist.png"
+                    },
+                    "Savasana (Corpse Pose)": {
+                        target: "Esprit, Système Nerveux (Récupération)",
+                        description: "Allongez-vous à plat sur le dos, bras légèrement éloignés du corps, paumes vers le haut. Fermez les yeux et détendez complètement chaque muscle. Concentrez-vous sur votre respiration.",
+                        tip: "Restez 1 à 5 minutes. C'est crucial pour la récupération et le refroidissement du système nerveux.",
+                        image: "workout_images/Savasana.png"
+                    }
+                },
+
+                // Workout Data
+                "programData": {
+                    day1: {
+                        title: "Jour 1 : Bas du Corps",
+                        focus: "Force des Jambes et Développement des Fessiers",
+                        intro: "Commencez votre semaine en force avec un accent sur le bas du corps. Cette séance commence par une activation dynamique, passe à des mouvements composés lourds (RDLs), met au défi votre stabilité avec un circuit de fentes, et se termine par un épuisement à haute répétition. Faites attention au tempo et aux périodes de repos.",
+                        blocks: [
+                            {
+                                title: "1. Échauffement",
+                                type: "warmup",
+                                exercises: [
+                                    { name: "Air Squat", duration: "30 s", type: "time" },
+                                    { name: "Good Morning", duration: "30 s", type: "time" },
+                                    { name: "Hamstring Scoops", duration: "30 s", type: "time", note: "Étirements Dynamiques des Ischio-jambiers" }
+                                ]
+                            },
+                            {
+                                title: "2. Bloc de Force : Soulevé de Terre Roumain (RDL)",
+                                type: "strength",
+                                sets: [
+                                    { desc: "Série 1", exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 répétitions" }], rest: 25 },
+                                    { desc: "Série 2", exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 répétitions" }], rest: 25 },
+                                    { desc: "Série 3", exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 répétitions" }], rest: 25 }
+                                ]
+                            },
+                            {
+                                title: "3. Bloc Fentes & Composé",
+                                type: "circuit",
+                                note: "Concentrez-vous sur l'équilibre et l'engagement du tronc.",
+                                sets: [
+                                    {
+                                        desc: "Tour 1",
+                                        exercises: [
+                                            { name: "Walking Lunge - Alternating", reps: "16 répétitions" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Lateral Bear Crawl", duration: "30 sec" },
+                                            { name: "High Plank Leg Lift", duration: "30 sec" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Tour 2",
+                                        exercises: [
+                                            { name: "Walking Lunge - Alternating", reps: "16 répétitions" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Lateral Bear Crawl", duration: "30 sec" },
+                                            { name: "High Plank Leg Lift", duration: "30 sec" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Tour 3",
+                                        exercises: [
+                                            { name: "Walking Lunge - Alternating", reps: "16 répétitions" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Lateral Bear Crawl", duration: "30 sec" },
+                                            { name: "High Plank Leg Lift", duration: "30 sec" }
+                                        ],
+                                        rest: 0
+                                    }
+                                ]
+                            },
+                            {
+                                title: "4. Bloc Squat & Pont de Fessiers",
+                                type: "circuit",
+                                sets: [
+                                    {
+                                        desc: "Série 1",
+                                        exercises: [
+                                            { name: "Squat", reps: "12 répétitions" },
+                                            { name: "Squat Pulse", reps: "12 répétitions", note: "Petites Pulsations" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Glute Bridge", reps: "12 répétitions" },
+                                            { name: "Glute Bridge Walk out", duration: "30 sec" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Série 2",
+                                        exercises: [
+                                            { name: "Squat", reps: "12 répétitions" },
+                                            { name: "Squat Pulse", reps: "12 répétitions", note: "Petites Pulsations" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Glute Bridge", reps: "12 répétitions" },
+                                            { name: "Glute Bridge Walk out", duration: "30 sec" }
+                                        ],
+                                        rest: 0
+                                    }
+                                ]
+                            },
+                            {
+                                title: "5. Finisseur + Retour au Calme",
+                                type: "mixed",
+                                content: [
+                                    {
+                                        subtitle: "Finisseur Épuisement",
+                                        items: [
+                                            "30 sec Patineur (Ice Skater)",
+                                            "30 sec Élévation des Mollets (Calf Raise)",
+                                            "Repos 15 sec",
+                                            "30 sec Patineur (Ice Skater)",
+                                            "30 sec Élévation des Mollets (Calf Raise)"
+                                        ]
+                                    },
+                                    {
+                                        subtitle: "Retour au Calme (Maintenir 30-45s)",
+                                        items: [
+                                            "Flexion Assise vers l'Avant (Seated Forward fold)",
+                                            "Genou à la Poitrine (Supine Knee to chest)",
+                                            "Posture de l'Enfant (Child's pose)"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                    ,
+                    day2: {
+                        title: "Jour 2 : Haut du Corps & Tronc",
+                        focus: "Force Pousser/Tirer et Stabilité du Tronc",
+                        intro: "Le Jour 2 équilibre le haut du corps avec des mouvements de poussée et de tirage. Vous effectuerez des pompes pour la poitrine/épaules, suivies de tractions inversées et de travail avec bande pour le dos. La séance se termine par un bloc de tronc dédié, axé sur la rotation et la stabilité anti-rotation.",
+                        blocks: [
+                            {
+                                title: "1. Échauffement",
+                                type: "warmup",
+                                exercises: [
+                                    { name: "Arm Circles", duration: "30 s", note: "Avant et Arrière" },
+                                    { name: "Thread the Needle", duration: "30 s", note: "Rotation Thoracique" },
+                                    { name: "Cat-Cow", duration: "30 s" }
+                                ]
+                            },
+                            {
+                                title: "2. Bloc Poussée",
+                                type: "strength",
+                                sets: [
+                                    { desc: "Série 1", exercises: [{ name: "Push-ups", reps: "10 répétitions" }], rest: 30 },
+                                    { desc: "Série 2", exercises: [{ name: "Push-ups", reps: "10 répétitions" }], rest: 30 },
+                                    { desc: "Série 3", exercises: [{ name: "Push-ups", reps: "10 répétitions" }], rest: 30 }
+                                ]
+                            },
+                            {
+                                title: "3. Bloc Tirage & Épaule Postérieure",
+                                type: "circuit",
+                                sets: [
+                                    {
+                                        desc: "Série 1",
+                                        exercises: [
+                                            { name: "Inverted Row", reps: "12-15 répétitions", note: "Utiliser une table solide" },
+                                            { name: "Rest", rest: 20 },
+                                            { name: "Band Pull-Apart", reps: "15-20 répétitions", note: "Bande ou Serviette" }
+                                        ],
+                                        rest: 20
+                                    },
+                                    {
+                                        desc: "Série 2",
+                                        exercises: [
+                                            { name: "Inverted Row", reps: "12-15 répétitions", note: "Utiliser une table solide" },
+                                            { name: "Rest", rest: 20 },
+                                            { name: "Band Pull-Apart", reps: "15-20 répétitions", note: "Bande ou Serviette" }
+                                        ],
+                                        rest: 20
+                                    }
+                                ]
+                            },
+                            {
+                                title: "4. Bloc Tronc : Stabilité & Rotation",
+                                type: "circuit",
+                                sets: [
+                                    {
+                                        desc: "Série 1 (Stabilité)",
+                                        exercises: [
+                                            { name: "Plank", duration: "60 sec" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Side Plank - Right", duration: "30 sec" },
+                                            { name: "Side Plank - Left", duration: "30 sec" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Série 2 (Rotation)",
+                                        exercises: [
+                                            { name: "Russian Twist", reps: "20 répétitions" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Bicycle Crunch", reps: "20 répétitions" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Russian Twist", reps: "20 répétitions" }
+                                        ],
+                                        rest: 0
+                                    }
+                                ]
+                            },
+                            {
+                                title: "5. Finisseur + Retour au Calme",
+                                type: "mixed",
+                                content: [
+                                    {
+                                        subtitle: "Finisseur (2 Tours)",
+                                        items: [
+                                            "30 sec Montées de Genoux (High Knees)",
+                                            "15 répétitions Dips Triceps (Triceps Dips)",
+                                            "Repos 20 sec"
+                                        ]
+                                    },
+                                    {
+                                        subtitle: "Retour au Calme (Maintenir 30-45s)",
+                                        items: [
+                                            "Étirement d'Épaule Croisé (Cross-Body Shoulder Stretch)",
+                                            "Étirement Triceps au-Dessus de la Tête (Overhead Triceps Stretch)",
+                                            "Posture du Cobra (Cobra Pose)"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    day3: {
+                        title: "Jour 3 : Cardio Corps Entier",
+                        focus: "Conditionnement Métabolique & Endurance",
+                        intro: "Le dernier jour est de haute intensité. Il comporte un circuit métabolique répété 3 fois sans repos entre les exercices. Ceci est suivi par un 'Bloc Thruster' combinant jambes et épaules, et un épuisement final du tronc. Préparez-vous à transpirer.",
+                        blocks: [
+                            {
+                                title: "1. Échauffement",
+                                type: "warmup",
+                                exercises: [
+                                    { name: "Jumping Jacks", duration: "30 s" },
+                                    { name: "Forward Lunges", duration: "30 s", note: "Alterné" },
+                                    { name: "Torso Twists", duration: "30 s" }
+                                ]
+                            },
+                            {
+                                title: "2. Circuit Cardio Métabolique",
+                                type: "circuit",
+                                note: "Effectuer consécutivement sans repos. Repos 60s à la fin du tour. Répéter 3 fois.",
+                                sets: [
+                                    {
+                                        desc: "Tour 1",
+                                        exercises: [
+                                            { name: "Burpees", reps: "15 répétitions", note: "Pas de pompe pour les débutants" },
+                                            { name: "High Knees", duration: "30 sec", note: "Rythme Rapide" },
+                                            { name: "Jump Lunges", reps: "20 répétitions", note: "10 par côté" },
+                                            { name: "Commando Plank", duration: "45 sec" }
+                                        ],
+                                        rest: 60
+                                    },
+                                    {
+                                        desc: "Tour 2",
+                                        exercises: [
+                                            { name: "Burpees", reps: "15 répétitions" },
+                                            { name: "High Knees", duration: "30 sec" },
+                                            { name: "Jump Lunges", reps: "20 répétitions" },
+                                            { name: "Commando Plank", duration: "45 sec" }
+                                        ],
+                                        rest: 60
+                                    },
+                                    {
+                                        desc: "Tour 3",
+                                        exercises: [
+                                            { name: "Burpees", reps: "15 répétitions" },
+                                            { name: "High Knees", duration: "30 sec" },
+                                            { name: "Jump Lunges", reps: "20 répétitions" },
+                                            { name: "Commando Plank", duration: "45 sec" }
+                                        ],
+                                        rest: 60
+                                    }
+                                ]
+                            },
+                            {
+                                title: "3. Jambes & Épaules (Bloc Thruster)",
+                                type: "strength",
+                                sets: [
+                                    {
+                                        desc: "Série 1",
+                                        exercises: [
+                                            { name: "Thrusters", reps: "12 répétitions", note: "Squat + Développé Épaules (Léger)" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Calf Raise", reps: "20 répétitions" }
+                                        ],
+                                        rest: 25
+                                    },
+                                    {
+                                        desc: "Série 2",
+                                        exercises: [
+                                            { name: "Thrusters", reps: "12 répétitions", note: "Squat + Développé Épaules (Léger)" },
+                                            { name: "Rest", rest: 25 },
+                                            { name: "Calf Raise", reps: "20 répétitions" }
+                                        ],
+                                        rest: 25
+                                    }
+                                ]
+                            },
+                            {
+                                title: "4. Finisseur Tronc",
+                                type: "circuit",
+                                sets: [
+                                    {
+                                        desc: "Série 1",
+                                        exercises: [
+                                            { name: "Heel Touches", reps: "20 répétitions" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Stationary Run", duration: "60 sec" }
+                                        ],
+                                        rest: 15
+                                    },
+                                    {
+                                        desc: "Série 2",
+                                        exercises: [
+                                            { name: "Heel Touches", reps: "20 répétitions" },
+                                            { name: "Rest", rest: 15 },
+                                            { name: "Stationary Run", duration: "60 sec" }
+                                        ],
+                                        rest: 0
+                                    }
+                                ]
+                            },
+                            {
+                                title: "5. Retour au Calme",
+                                type: "mixed",
+                                content: [
+                                    {
+                                        subtitle: "Maintenir 30-45 sec par position",
+                                        items: [
+                                            "Étirement Quadriceps Debout (Standing Quadriceps Stretch)",
+                                            "Étirement Ischio-jambiers au Sol (Floor Hamstring Stretch)",
+                                            "Torsion Spinale Couchée (Supine Spinal Twist)",
+                                            "Savasana (Posture du Cadavre)"
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
             }
         };
 
-
-        // --- DATA STORE (WORKOUTS) ---
-        // Sourced directly from the "3-Day Training Program" markdown.
-        const programData = {
-            day1: {
-                title: "Day 1: Lower Body",
-                focus: "Leg Strength & Glute Development",
-                intro: "Start your week strong with a lower body focus. This session begins with dynamic activation, moves into heavy compound lifts (RDLs), challenges your stability with a lunge circuit, and finishes with a high-rep burnout. Pay attention to the tempo and rest periods.",
-                blocks: [
-                    {
-                        title: "1. Warm Up",
-                        type: "warmup",
-                        exercises: [
-                            { name: "Air Squat", duration: "30 s", type: "time" },
-                            { name: "Good Morning", duration: "30 s", type: "time" },
-                            { name: "Hamstring Scoops", duration: "30 s", type: "time", note: "Dynamic Hamstring Stretches" }
-                        ]
-                    },
-                    {
-                        title: "2. Strength Block: Romanian Deadlift",
-                        type: "strength",
-                        sets: [
-                            { 
-                                desc: "Set 1", 
-                                exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 reps" }], 
-                                rest: 25 
-                            },
-                            { 
-                                desc: "Set 2", 
-                                exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 reps" }], 
-                                rest: 25 
-                            },
-                            { 
-                                desc: "Set 3", 
-                                exercises: [{ name: "Romanian Deadlift (RDL)", reps: "12 reps" }], 
-                                rest: 25 
-                            }
-                        ]
-                    },
-                    {
-                        title: "3. Lunge & Compound Block",
-                        type: "circuit",
-                        note: "Focus on balance and core engagement.",
-                        sets: [
-                            {
-                                desc: "Round 1",
-                                exercises: [
-                                    { name: "Walking Lunge - Alternating", reps: "16 reps" },
-                                    { name: "Rest", rest: 15 },
-                                    { name: "Lateral Bear Crawl", duration: "30 sec" },
-                                    { name: "High Plank Leg Lift", duration: "30 sec" }
-                                ],
-                                rest: 25
-                            },
-                            {
-                                desc: "Round 2",
-                                exercises: [
-                                    { name: "Walking Lunge - Alternating", reps: "16 reps" },
-                                    { name: "Rest", rest: 15 },
-                                    { name: "Lateral Bear Crawl", duration: "30 sec" },
-                                    { name: "High Plank Leg Lift", duration: "30 sec" }
-                                ],
-                                rest: 25
-                            },
-                            {
-                                desc: "Round 3",
-                                exercises: [
-                                    { name: "Walking Lunge - Alternating", reps: "16 reps" },
-                                    { name: "Rest", rest: 15 },
-                                    { name: "Lateral Bear Crawl", duration: "30 sec" },
-                                    { name: "High Plank Leg Lift", duration: "30 sec" }
-                                ],
-                                rest: 0
-                            }
-                        ]
-                    },
-                    {
-                        title: "4. Squat & Bridge Block",
-                        type: "circuit",
-                        sets: [
-                            {
-                                desc: "Set 1",
-                                exercises: [
-                                    { name: "Squat", reps: "12 reps" },
-                                    { name: "Squat Pulse", reps: "12 reps", note: "Small Pulses" },
-                                    { name: "Rest", rest: 25 },
-                                    { name: "Glute Bridge", reps: "12 reps" },
-                                    { name: "Glute Bridge Walk out", duration: "30 sec" }
-                                ],
-                                rest: 25
-                            },
-                            {
-                                desc: "Set 2",
-                                exercises: [
-                                    { name: "Squat", reps: "12 reps" },
-                                    { name: "Squat Pulse", reps: "12 reps", note: "Small Pulses" },
-                                    { name: "Rest", rest: 25 },
-                                    { name: "Glute Bridge", reps: "12 reps" },
-                                    { name: "Glute Bridge Walk out", duration: "30 sec" }
-                                ],
-                                rest: 0
-                            }
-                        ]
-                    },
-                    {
-                        title: "5. Finisher + Cool Down",
-                        type: "mixed",
-                        content: [
-                            {
-                                subtitle: "Burnout Finisher",
-                                items: [
-                                    "30 sec Ice Skater",
-                                    "30 sec Calf Raise",
-                                    "Rest 15 sec",
-                                    "30 sec Ice Skater",
-                                    "30 sec Calf Raise"
-                                ]
-                            },
-                            {
-                                subtitle: "Cool Down (Hold 30-45s)",
-                                items: [
-                                    "Seated Forward fold",
-                                    "Supine Knee to chest",
-                                    "Child's pose"
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            day2: {
-                title: "Day 2: Upper Body & Core",
-                focus: "Push/Pull Strength & Core Stability",
-                intro: "Day 2 balances the upper body with push and pull movements. You will perform push-ups for chest/shoulders, followed by inverted rows and band work for the back. The session finishes with a dedicated core block focusing on rotation and anti-rotation stability.",
-                blocks: [
-                    {
-                        title: "1. Warm Up",
-                        type: "warmup",
-                        exercises: [
-                            { name: "Arm Circles", duration: "30 s", note: "Forward & Backward" },
-                            { name: "Thread the Needle", duration: "30 s", note: "Supine Thoracic Rotation" },
-                            { name: "Cat-Cow", duration: "30 s" }
-                        ]
-                    },
-                    {
-                        title: "2. Push Block",
-                        type: "strength",
-                        sets: [
-                            { desc: "Set 1", exercises: [{ name: "Push-ups", reps: "10 reps" }], rest: 30 },
-                            { desc: "Set 2", exercises: [{ name: "Push-ups", reps: "10 reps" }], rest: 30 },
-                            { desc: "Set 3", exercises: [{ name: "Push-ups", reps: "10 reps" }], rest: 30 }
-                        ]
-                    },
-                    {
-                        title: "3. Pull & Rear Shoulder Block",
-                        type: "circuit",
-                        sets: [
-                            {
-                                desc: "Set 1",
-                                exercises: [
-                                    { name: "Inverted Row", reps: "12-15 reps", note: "Using a sturdy table" },
-                                    { name: "Rest", rest: 20 },
-                                    { name: "Band Pull-Apart", reps: "15-20 reps", note: "Band or Towel" }
-                                ],
-                                rest: 20
-                            },
-                            {
-                                desc: "Set 2",
-                                exercises: [
-                                    { name: "Inverted Row", reps: "12-15 reps", note: "Using a sturdy table" },
-                                    { name: "Rest", rest: 20 },
-                                    { name: "Band Pull-Apart", reps: "15-20 reps", note: "Band or Towel" }
-                                ],
-                                rest: 20
-                            }
-                        ]
-                    },
-                    {
-                        title: "4. Core Block: Stability & Rotation",
-                        type: "circuit",
-                        sets: [
-                            {
-                                desc: "Set 1 (Stability)",
-                                exercises: [
-                                    { name: "Plank", duration: "60 sec" },
-                                    { name: "Rest", rest: 15 },
-                                    { name: "Side Plank - Right", duration: "30 sec" },
-                                    { name: "Side Plank - Left", duration: "30 sec" }
-                                ],
-                                rest: 25
-                            },
-                            {
-                                desc: "Set 2 (Rotation)",
-                                exercises: [
-                                    { name: "Russian Twist", reps: "20 reps" },
-                                    { name: "Rest", rest: 25 },
-                                    { name: "Bicycle Crunch", reps: "20 reps" },
-                                    { name: "Rest", rest: 25 },
-                                    { name: "Russian Twist", reps: "20 reps" }
-                                ],
-                                rest: 0
-                            }
-                        ]
-                    },
-                    {
-                        title: "5. Finisher + Cool Down",
-                        type: "mixed",
-                        content: [
-                            {
-                                subtitle: "Finisher (2 Rounds)",
-                                items: [
-                                    "30 sec High Knees",
-                                    "15 rep Triceps Dips",
-                                    "Rest 20 sec"
-                                ]
-                            },
-                            {
-                                subtitle: "Cool Down (Hold 30-45s)",
-                                items: [
-                                    "Cross-Body Shoulder Stretch",
-                                    "Overhead Triceps Stretch",
-                                    "Cobra Pose"
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            },
-            day3: {
-                title: "Day 3: Full Body Cardio",
-                focus: "Metabolic Conditioning & Endurance",
-                intro: "The final day is high intensity. It features a metabolic circuit repeated 3 times with no rest between exercises. This is followed by a 'Thruster Block' combining legs and shoulders, and a final core burnout. Prepare to sweat.",
-                blocks: [
-                    {
-                        title: "1. Warm Up",
-                        type: "warmup",
-                        exercises: [
-                            { name: "Jumping Jacks", duration: "30 s" },
-                            { name: "Forward Lunges", duration: "30 s", note: "Alternating" },
-                            { name: "Torso Twists", duration: "30 s" }
-                        ]
-                    },
-                    {
-                        title: "2. Metabolic Cardio Circuit",
-                        type: "circuit",
-                        note: "Perform consecutively without rest. Rest 60s at end of round. Repeat 3 times.",
-                        sets: [
-                            {
-                                desc: "Round 1",
-                                exercises: [
-                                    { name: "Burpees", reps: "15 reps", note: "No push-up for beginners" },
-                                    { name: "High Knees", duration: "30 sec", note: "Fast Pace" },
-                                    { name: "Jump Lunges", reps: "20 reps", note: "10 per side" },
-                                    { name: "Commando Plank", duration: "45 sec" }
-                                ],
-                                rest: 60
-                            },
-                            {
-                                desc: "Round 2",
-                                exercises: [
-                                    { name: "Burpees", reps: "15 reps" },
-                                    { name: "High Knees", duration: "30 sec" },
-                                    { name: "Jump Lunges", reps: "20 reps" },
-                                    { name: "Commando Plank", duration: "45 sec" }
-                                ],
-                                rest: 60
-                            },
-                            {
-                                desc: "Round 3",
-                                exercises: [
-                                    { name: "Burpees", reps: "15 reps" },
-                                    { name: "High Knees", duration: "30 sec" },
-                                    { name: "Jump Lunges", reps: "20 reps" },
-                                    { name: "Commando Plank", duration: "45 sec" }
-                                ],
-                                rest: 60
-                            }
-                        ]
-                    },
-                    {
-                        title: "3. Legs & Shoulders (Thruster Block)",
-                        type: "strength",
-                        sets: [
-                            {
-                                desc: "Set 1",
-                                exercises: [
-                                    { name: "Thrusters", reps: "12 reps", note: "Squat + Overhead Press (Light)" },
-                                    { name: "Rest", rest: 25 },
-                                    { name: "Calf Raise", reps: "20 reps" }
-                                ],
-                                rest: 25
-                            },
-                            {
-                                desc: "Set 2",
-                                exercises: [
-                                    { name: "Thrusters", reps: "12 reps", note: "Squat + Overhead Press (Light)" },
-                                    { name: "Rest", rest: 25 },
-                                    { name: "Calf Raise", reps: "20 reps" }
-                                ],
-                                rest: 25
-                            }
-                        ]
-                    },
-                    {
-                        title: "4. Core Finisher",
-                        type: "circuit",
-                        sets: [
-                            {
-                                desc: "Set 1",
-                                exercises: [
-                                    { name: "Heel Touches", reps: "20 reps" },
-                                    { name: "Rest", rest: 15 },
-                                    { name: "Stationary Run", duration: "60 sec" }
-                                ],
-                                rest: 15
-                            },
-                            {
-                                desc: "Set 2",
-                                exercises: [
-                                    { name: "Heel Touches", reps: "20 reps" },
-                                    { name: "Rest", rest: 15 },
-                                    { name: "Stationary Run", duration: "60 sec" }
-                                ],
-                                rest: 0
-                            }
-                        ]
-                    },
-                    {
-                        title: "5. Cool Down",
-                        type: "mixed",
-                        content: [
-                            {
-                                subtitle: "Hold 30-45 sec per position",
-                                items: [
-                                    "Standing Quadriceps Stretch",
-                                    "Floor Hamstring Stretch",
-                                    "Supine Spinal Twist",
-                                    "Savasana (Corpse Pose)"
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        };
 
         // --- STATE MANAGEMENT ---
+        let currentLang = 'EN';
         let currentDayId = null;
         let timerInterval = null;
         let totalChecks = 0;
         let checkedCount = 0;
 
+        // --- LANGUAGE LOGIC ---
+
+        const staticTextElements = [
+            'nav-home', 'nav-day1', 'nav-day2', 'nav-day3', 
+            'timer-rest-recover', 'timer-skip-done', 
+            'modal-image-note', 'home-title', 'home-intro', 
+            'home-day1-title', 'home-day1-desc', 
+            'home-day2-title', 'home-day2-desc', 
+            'home-day3-title', 'home-day3-desc', 
+            'chart1-title', 'chart1-subtitle', 
+            'chart2-title', 'chart2-subtitle', 
+            'workout-progress', 'workout-complete-btn', 
+            'footer-text'
+        ];
+        
+        // Mapping from HTML ID (with '-') to Translation Key (with '_') for navigation
+        const navTranslationKeys = {
+            'nav-home': 'nav_dashboard',
+            'nav-day1': 'nav_day1',
+            'nav-day2': 'nav_day2',
+            'nav-day3': 'nav_day3',
+        };
+
+
+        function getTranslation(key, lang = currentLang) {
+            return translations[lang][key];
+        }
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            
+            // 1. Update static HTML text
+            staticTextElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    let key;
+                    if (navTranslationKeys[id]) {
+                        // Use the explicit map for nav buttons (nav-home, nav-day1, etc.)
+                        key = navTranslationKeys[id];
+                    } else {
+                        // For all other elements (home-title, chart1-title, etc.), replace dash with underscore
+                        key = id.replace(/-/g, '_');
+                    }
+                    
+                    if (translations[lang][key]) {
+                        element.textContent = translations[lang][key];
+                    }
+                }
+            });
+
+            // 2. If a workout is active, re-render it to apply exercise data translations
+            if (currentDayId) {
+                renderWorkout(currentDayId);
+            }
+            
+            // 3. Update active nav button text (if applicable) and selector options
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                 const id = btn.id;
+                 const key = navTranslationKeys[id];
+                 if (translations[lang][key]) {
+                      btn.textContent = translations[lang][key];
+                 }
+            });
+            
+            // Also update the language selector options text
+            const langToggle = document.getElementById('lang-toggle');
+            if (lang === 'FR') {
+                 // Ensure the selected option text is updated
+                 langToggle.options[0].textContent = 'Anglais';
+                 langToggle.options[1].textContent = 'Français';
+            } else {
+                 langToggle.options[0].textContent = 'English';
+                 langToggle.options[1].textContent = 'Français';
+            }
+        }
+
         // --- INIT & NAVIGATION ---
         function switchTab(tabId) {
+            // Get translated tab names using the correct keys
+            const dashboardName = translations[currentLang].nav_dashboard;
+            const day1Name = translations[currentLang].nav_day1;
+            const day2Name = translations[currentLang].nav_day2;
+            const day3Name = translations[currentLang].nav_day3;
+
             // Update buttons
+            document.getElementById('nav-home').textContent = dashboardName;
+            document.getElementById('nav-day1').textContent = day1Name;
+            document.getElementById('nav-day2').textContent = day2Name;
+            document.getElementById('nav-day3').textContent = day3Name;
+
+
             document.querySelectorAll('.nav-btn').forEach(btn => {
                 if (btn.id === `nav-${tabId}`) {
                     btn.classList.add('bg-orange-50', 'text-orange-600');
@@ -849,10 +1613,11 @@
 
         // --- RENDER LOGIC ---
         function getInfoButton(exerciseName) {
-            // This is the clickable info button element
+            const details = translations[currentLang].exerciseDetails;
             const sanitizedName = exerciseName.replace(/"/g, '&quot;');
+            
             // Check if details exist before adding the button
-            if (exerciseDetails[exerciseName]) {
+            if (details[exerciseName]) {
                  return `
                     <button onclick="showExerciseDetails('${sanitizedName}')" 
                             class="text-xs text-orange-500 hover:text-orange-700 font-bold ml-2 transition-colors focus:outline-none">
@@ -864,13 +1629,17 @@
         }
 
         function renderWorkout(dayId) {
-            const data = programData[dayId];
+            const data = translations[currentLang].programData[dayId];
             if (!data) return;
 
             // Header info
             document.getElementById('workout-title').innerText = data.title;
             document.getElementById('workout-subtitle').innerText = data.focus;
             document.getElementById('workout-intro').innerText = data.intro;
+            
+            // Update progress text (already handled by setLanguage, but refresh in case)
+            document.getElementById('workout-progress').textContent = translations[currentLang].workout_progress;
+            document.getElementById('workout-complete-btn').textContent = translations[currentLang].workout_complete_btn;
 
             const container = document.getElementById('workout-container');
             container.innerHTML = '';
@@ -879,6 +1648,12 @@
             totalChecks = 0;
             checkedCount = 0;
             updateProgress();
+            
+            // Get translated strings for dynamic content
+            const restSetBtnText = currentLang === 'EN' ? 'Rest Set' : 'Repos Série';
+            const restExBtnText = currentLang === 'EN' ? 'Rest' : 'Repos';
+            const completeBlockText = currentLang === 'EN' ? 'I completed the Finisher & Cool Down' : 'J\'ai terminé le Finisseur & Retour au Calme';
+
 
             // Build Blocks
             data.blocks.forEach((block, blockIndex) => {
@@ -927,7 +1702,7 @@
                                 blockHtml += `
                                     <li class="flex justify-end pt-1">
                                          <button onclick="startTimer(${ex.rest})" class="flex items-center space-x-2 text-xs font-bold text-orange-600 hover:text-orange-700 bg-orange-50 hover:bg-orange-100 px-3 py-1 rounded-full transition">
-                                            <span>⏱️ Rest ${ex.rest}s</span>
+                                            <span>⏱️ ${restExBtnText} ${ex.rest}s</span>
                                         </button>
                                     </li>
                                 `;
@@ -957,7 +1732,7 @@
                                 <div class="border-t border-stone-100 pt-3 flex justify-center">
                                     <button onclick="startTimer(${set.rest})" class="w-full sm:w-auto flex items-center justify-center space-x-2 text-sm font-bold text-white bg-stone-800 hover:bg-stone-700 px-4 py-2 rounded-lg transition shadow-sm">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                                        <span>Rest Set (${set.rest}s)</span>
+                                        <span>${restSetBtnText} (${set.rest}s)</span>
                                     </button>
                                 </div>
                             `;
@@ -973,6 +1748,7 @@
                                     ${section.items.map(item => {
                                         // Extract exercise name from mixed items (e.g., "30 sec Ice Skater")
                                         const nameMatch = item.match(/^(.*?)\s\d/); 
+                                        // If no time/reps are present, use the whole item.
                                         const exerciseName = nameMatch ? nameMatch[1].trim() : item.trim().replace(/\(.*\)/g, '').trim(); 
                                         
                                         return `
@@ -991,7 +1767,7 @@
                      blockHtml += `
                         <div class="mt-4 pt-4 border-t border-stone-100 flex items-center space-x-3">
                              <input type="checkbox" onchange="updateProgress()" class="w-5 h-5 text-orange-600 rounded focus:ring-orange-500 border-gray-300">
-                             <span class="text-stone-800 font-medium">I completed the Finisher & Cool Down</span>
+                             <span class="text-stone-800 font-medium">${completeBlockText}</span>
                         </div>
                      `;
                 }
@@ -1007,18 +1783,24 @@
         // --- EXERCISE DETAILS MODAL LOGIC ---
         function showExerciseDetails(exerciseName) {
             const sanitizedName = exerciseName.replace(/&quot;/g, '"');
-            const details = exerciseDetails[sanitizedName];
-            const imageContainer = document.getElementById('modal-image-container');
+            const details = translations[currentLang].exerciseDetails[sanitizedName];
             const placeholder = document.getElementById('modal-image-placeholder');
             const note = document.getElementById('modal-image-note');
+            
+            // Get translated strings for modal
+            const missingTitle = getTranslation('modal_details_missing_title');
+            const missingBody = getTranslation('modal_details_missing_body');
+            const targetTitle = getTranslation('modal_target_title');
+            const execTitle = getTranslation('modal_exec_title');
+            const tipTitle = getTranslation('modal_tip_title');
             
             if (!details) {
                 // Handle case where details are missing
                 document.getElementById('modal-title').innerText = sanitizedName;
                 document.getElementById('modal-exercise-name').innerText = sanitizedName;
                 document.getElementById('modal-content').innerHTML = `
-                    <p class="text-red-500 font-bold">Details Indisponibles</p>
-                    <p>Aucune description ou image n'est disponible pour l'exercice "${sanitizedName}".</p>
+                    <p class="text-red-500 font-bold">${missingTitle}</p>
+                    <p>${missingBody} "${sanitizedName}".</p>
                 `;
                 // Reset image container to placeholder
                 placeholder.innerHTML = `<p class="text-stone-500 p-4 text-center">Image for: <strong id="modal-exercise-name">${sanitizedName}</strong></p>`;
@@ -1029,6 +1811,7 @@
                 
                 // Check for image and display it if available
                 if (details.image) {
+                    // FIX from previous turn: object-contain to ensure the whole image is visible
                     placeholder.innerHTML = `<img src="${details.image}" alt="${sanitizedName}" class="w-full h-full object-contain rounded-lg">`;
                     note.classList.add('hidden');
                 } else {
@@ -1039,17 +1822,17 @@
                 document.getElementById('modal-content').innerHTML = `
                     <div class="space-y-4">
                         <div class="p-3 bg-orange-50 rounded-lg border border-orange-100">
-                            <h4 class="font-bold text-sm uppercase text-orange-700 mb-1">Cible Musculaire</h4>
+                            <h4 class="font-bold text-sm uppercase text-orange-700 mb-1">${targetTitle}</h4>
                             <p class="font-medium text-stone-800">${details.target}</p>
                         </div>
                         
                         <div>
-                            <h4 class="font-bold text-stone-700 mb-2">Description de l'Exécution</h4>
+                            <h4 class="font-bold text-stone-700 mb-2">${execTitle}</h4>
                             <p class="text-stone-600">${details.description}</p>
                         </div>
 
                         <div class="border-t border-stone-200 pt-3">
-                            <h4 class="font-bold text-stone-700 mb-2">Conseil de Performance</h4>
+                            <h4 class="font-bold text-stone-700 mb-2">${tipTitle}</h4>
                             <p class="text-sm text-stone-500 italic">"${details.tip}"</p>
                         </div>
                     </div>
@@ -1068,13 +1851,14 @@
             const checkboxes = document.querySelectorAll('#workout-container input[type="checkbox"]');
             const checked = Array.from(checkboxes).filter(cb => cb.checked).length;
             
+            totalChecks = checkboxes.length; // Recalculate total checks
             const pct = totalChecks === 0 ? 0 : Math.round((checked / totalChecks) * 100);
             document.getElementById('progress-bar').style.width = `${pct}%`;
             document.getElementById('progress-text').innerText = `${pct}%`;
         }
 
         function finishWorkout() {
-            alert("Great job! Workout completed. Ensure you hydrate and rest."); 
+            alert(translations[currentLang].alert_complete); 
             switchTab('home');
         }
 
@@ -1099,7 +1883,7 @@
                 if (remainingTime <= 0) {
                     clearInterval(timerInterval);
                     playBeep();
-                    display.innerText = "GO!";
+                    display.innerText = currentLang === 'EN' ? "GO!" : "C'EST PARTI!";
                     display.classList.remove('text-white');
                     display.classList.add('text-orange-500', 'animate-pulse');
                     setTimeout(stopTimer, 2000);
@@ -1189,7 +1973,8 @@
                 }
             });
             
-            // Start on Dashboard view and setup dynamic render
+            // Set initial language and view
+            setLanguage('EN');
             switchTab('home');
             
             // Re-render Day 2 if it was the hardcoded default to ensure JS consistency
